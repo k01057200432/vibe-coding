@@ -3,7 +3,6 @@
 import { NavRail } from "./nav-rail";
 import { BottomTabs } from "./bottom-tabs";
 import { TerminalPanel } from "./terminal-panel";
-import { HudOverlay } from "./hud-overlay";
 import { CommandPalette } from "./command-palette";
 import { useUIStore } from "@/lib/stores/ui";
 
@@ -28,7 +27,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <BottomTabs className="md:hidden" />
       </div>
 
-      <HudOverlay />
       <CommandPalette />
     </div>
   );
