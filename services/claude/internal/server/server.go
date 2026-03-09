@@ -9,7 +9,6 @@ import (
 	"git.gobau.dev/k00432/trading-claude/internal/store"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/riandyrn/otelchi"
 )
 
 // New creates a chi router with all routes registered.
@@ -17,7 +16,6 @@ func New(mgr *session.Manager, repo store.Repository, logger *slog.Logger) http.
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RealIP)
-	r.Use(otelchi.Middleware("trading-claude"))
 
 	sessHandler := session.NewHandler(mgr, logger)
 	chatHandler := chat.NewHandler(repo, logger)

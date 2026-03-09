@@ -13,40 +13,20 @@ import (
 	"git.gobau.dev/k00432/trading-claude/internal/server"
 	"git.gobau.dev/k00432/trading-claude/internal/session"
 	"git.gobau.dev/k00432/trading-claude/internal/store"
-	totelotel "git.gobau.dev/k00432/trading-claude/pkg/otel"
 )
 
 func main() {
 	var (
-		dsn  = flag.String("dsn", "", "PostgreSQL connection string")
-		addr = flag.String("addr", ":8081", "listen address")
+		dbPath = flag.String("db", "/data/sessions.db", "SQLite database file path")
+		addr   = flag.String("addr", ":8081", "listen address")
 	)
 	flag.Parse()
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-	if *dsn == "" {
-		*dsn = os.Getenv("DATABASE_URL")
-	}
-	if *dsn == "" {
-		logger.Error("dsn is required (--dsn or DATABASE_URL)")
-		os.Exit(1)
-	}
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	// OpenTelemetry
-	shutdownTracer, err := totelotel.Init(ctx, "trading-claude")
+	repo, err := store.NewSQLite(*dbPath)
 	if err != nil {
-		logger.Error("failed to init otel", "err", err)
-		os.Exit(1)
-	}
-	defer shutdownTracer(context.Background())
-
-	repo, err := store.New(ctx, *dsn)
-	if err != nil {
-		logger.Error("failed to connect to database", "err", err)
+		logger.Error("failed to open database", "err", err)
 		os.Exit(1)
 	}
 	defer repo.Close()
