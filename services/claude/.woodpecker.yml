@@ -1,0 +1,59 @@
+when:
+  - event: push
+    branch: main
+
+steps:
+  - name: build-push
+    image: woodpeckerci/plugin-docker-buildx
+    privileged: true
+    settings:
+      repo: reg.int.gobau.dev/trading/trading-claude
+      registry: reg.int.gobau.dev
+      tags: latest
+      pull_image: false
+      username:
+        from_secret: registry_username
+      password:
+        from_secret: registry_password
+      cache_from: reg.int.gobau.dev/trading/trading-claude:cache
+      cache_to: reg.int.gobau.dev/trading/trading-claude:cache
+
+  - name: notify-success
+    image: reg.int.gobau.dev/library/alpine:latest
+    when:
+      - status: success
+    environment:
+      TOKEN:
+        from_secret: notification_token
+    commands:
+      - apk add --no-cache curl > /dev/null 2>&1
+      - |
+        MSG=$(echo "$CI_COMMIT_MESSAGE" | head -1 | sed 's/[\"\\<>]//g')
+        STATUS=$(curl -s -o /tmp/resp.txt -w '%{http_code}' -X POST https://trading.int.gobau.dev/api/notifications \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer $TOKEN" \
+          -d "{\"level\":\"info\",\"title\":\"✅ 빌드 성공\",\"message\":\"claude #$CI_PIPELINE_NUMBER · $MSG\",\"data\":{\"category\":\"deploy\",\"service\":\"trading-claude\",\"pipeline\":\"$CI_PIPELINE_NUMBER\"}}")
+        echo "HTTP $STATUS"
+        cat /tmp/resp.txt
+        echo ""
+        [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 300 ]
+
+  - name: notify-failure
+    image: reg.int.gobau.dev/library/alpine:latest
+    when:
+      - status: failure
+    environment:
+      TOKEN:
+        from_secret: notification_token
+    commands:
+      - apk add --no-cache curl > /dev/null 2>&1
+      - |
+        MSG=$(echo "$CI_COMMIT_MESSAGE" | head -1 | sed 's/[\"\\<>]//g')
+        STATUS=$(curl -s -o /tmp/resp.txt -w '%{http_code}' -X POST https://trading.int.gobau.dev/api/notifications \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer $TOKEN" \
+          -d "{\"level\":\"critical\",\"title\":\"❌ 빌드 실패\",\"message\":\"claude #$CI_PIPELINE_NUMBER · $MSG\",\"data\":{\"category\":\"deploy\",\"service\":\"trading-claude\",\"pipeline\":\"$CI_PIPELINE_NUMBER\"}}")
+        echo "HTTP $STATUS"
+        cat /tmp/resp.txt
+        echo ""
+        [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 300 ]
