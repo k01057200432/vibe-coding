@@ -25,6 +25,11 @@ export const metadata: Metadata = {
     icon: "/icons/icon.svg",
     apple: "/icons/apple-touch-icon.png",
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Vibe Coding",
+  },
 };
 
 export const viewport: Viewport = {
@@ -50,6 +55,11 @@ export default function RootLayout({
         <Providers>
           <AppShell>{children}</AppShell>
         </Providers>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if("serviceWorker"in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("/sw.js")})}`,
+          }}
+        />
       </body>
     </html>
   );

@@ -13,14 +13,10 @@ services:
     build:
       context: ./services/ui
       dockerfile: Dockerfile
-    command: npm run dev
     environment:
       - DEMO_USERNAME=${DEMO_USERNAME}
       - DEMO_PASSWORD=${DEMO_PASSWORD}
       - NEXT_PUBLIC_CLAUDE_URL=/claude
-    volumes:
-      - ui-source:/app/app
-      - ui-components:/app/components
 
   claude:
     build:
@@ -29,11 +25,11 @@ services:
     environment:
       - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN}
     volumes:
-      - ui-source:/workspace/app
-      - ui-components:/workspace/components
+      - .:/workspace
       - claude-home:/home/coder
+      - /var/run/docker.sock:/var/run/docker.sock
+    group_add:
+      - "${DOCKER_GID:-999}"
 
 volumes:
-  ui-source:
-  ui-components:
   claude-home:

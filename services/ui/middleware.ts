@@ -7,9 +7,13 @@ export function middleware(req: NextRequest) {
   if (
     pathname === "/" ||
     pathname === "/login" ||
+    pathname === "/about" ||
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/_next") ||
-    pathname === "/favicon.ico"
+    pathname === "/favicon.ico" ||
+    pathname === "/sw.js" ||
+    pathname === "/manifest.json" ||
+    pathname.startsWith("/icons/")
   ) {
     return NextResponse.next();
   }
