@@ -10,8 +10,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"git.gobau.dev/k00432/trading-claude/internal/claude"
-	"git.gobau.dev/k00432/trading-claude/internal/store"
+	"github.com/k00432/vibe-coding/services/claude/internal/claude"
+	"github.com/k00432/vibe-coding/services/claude/internal/store"
 )
 
 // Request is the chat API request body.

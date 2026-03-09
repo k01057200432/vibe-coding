@@ -1,4 +1,4 @@
-FROM reg.int.gobau.dev/library/golang:1.26.0-bookworm AS builder
+FROM golang:1.24-bookworm AS builder
 RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
 WORKDIR /src
 COPY go.mod go.sum ./
@@ -6,9 +6,9 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=1 go build -o /app/claude-server .
 
-FROM reg.int.gobau.dev/astral-sh/uv:latest AS uv
+FROM ghcr.io/astral-sh/uv:latest AS uv
 
-FROM reg.int.gobau.dev/library/debian:bookworm-slim
+FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates tzdata git curl bash sudo \

@@ -4,9 +4,9 @@ import (
 	"log/slog"
 	"net/http"
 
-	"git.gobau.dev/k00432/trading-claude/internal/chat"
-	"git.gobau.dev/k00432/trading-claude/internal/session"
-	"git.gobau.dev/k00432/trading-claude/internal/store"
+	"github.com/k00432/vibe-coding/services/claude/internal/chat"
+	"github.com/k00432/vibe-coding/services/claude/internal/session"
+	"github.com/k00432/vibe-coding/services/claude/internal/store"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )

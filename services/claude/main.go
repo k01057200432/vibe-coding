@@ -10,9 +10,9 @@ import (
 	"syscall"
 	"time"
 
-	"git.gobau.dev/k00432/trading-claude/internal/server"
-	"git.gobau.dev/k00432/trading-claude/internal/session"
-	"git.gobau.dev/k00432/trading-claude/internal/store"
+	"github.com/k00432/vibe-coding/services/claude/internal/server"
+	"github.com/k00432/vibe-coding/services/claude/internal/session"
+	"github.com/k00432/vibe-coding/services/claude/internal/store"
 )
 
 func main() {

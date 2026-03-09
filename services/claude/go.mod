@@ -1,6 +1,6 @@
-module git.gobau.dev/k00432/trading-claude
+module github.com/k00432/vibe-coding/services/claude
 
-go 1.26.0
+go 1.25.0
 
 require (
 	github.com/creack/pty/v2 v2.0.1

@@ -1,0 +1,39 @@
+services:
+  caddy:
+    image: caddy:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    depends_on:
+      - ui
+      - claude
+
+  ui:
+    build:
+      context: ./services/ui
+      dockerfile: Dockerfile
+    command: npm run dev
+    environment:
+      - DEMO_USERNAME=${DEMO_USERNAME}
+      - DEMO_PASSWORD=${DEMO_PASSWORD}
+      - NEXT_PUBLIC_CLAUDE_URL=/claude
+    volumes:
+      - ui-source:/app/app
+      - ui-components:/app/components
+
+  claude:
+    build:
+      context: ./services/claude
+      dockerfile: Dockerfile
+    environment:
+      - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN}
+    volumes:
+      - ui-source:/workspace/app
+      - ui-components:/workspace/components
+      - claude-home:/home/coder
+
+volumes:
+  ui-source:
+  ui-components:
+  claude-home:

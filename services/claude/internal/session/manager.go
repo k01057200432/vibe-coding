@@ -10,8 +10,8 @@ import (
 	"sync"
 	"time"
 
-	"git.gobau.dev/k00432/trading-claude/internal/claude"
-	"git.gobau.dev/k00432/trading-claude/internal/store"
+	"github.com/k00432/vibe-coding/services/claude/internal/claude"
+	"github.com/k00432/vibe-coding/services/claude/internal/store"
 	"github.com/creack/pty/v2"
 	"github.com/google/uuid"
 )
