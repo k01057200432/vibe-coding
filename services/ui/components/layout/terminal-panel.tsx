@@ -6,7 +6,9 @@ import { useUIStore } from "@/lib/stores/ui";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const CLAUDE_URL = process.env.NEXT_PUBLIC_CLAUDE_URL || "";
+const CLAUDE_URL = process.env.NEXT_PUBLIC_CLAUDE_URL
+  ? `${process.env.NEXT_PUBLIC_CLAUDE_URL}/chat`
+  : "";
 const MIN_HEIGHT = 200;
 const MIN_HEIGHT_MODE_SELECT = 480;
 
