@@ -14,6 +14,7 @@ import {
   Sparkles,
   Cloud,
   CreditCard,
+  ExternalLink,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useUIStore } from "@/lib/stores/ui";
@@ -99,19 +100,33 @@ export function NavRail({ className }: { className?: string }) {
 
       {/* Actions */}
       <div className="border-t border-subtle px-2 py-3 space-y-1">
-        <Button
-          variant="ghost"
-          size="sm"
-          className={cn(
-            "w-full text-[var(--text-secondary)] hover:text-[var(--text-primary)]",
-            navCollapsed ? "justify-center px-2" : "justify-start gap-2"
-          )}
-          onClick={toggleTerminal}
-          title="터미널 (Ctrl+`)"
-        >
-          <Terminal className="h-4 w-4 shrink-0" />
-          {!navCollapsed && <span className="text-xs">터미널</span>}
-        </Button>
+        <div className={cn("flex items-center gap-0.5", navCollapsed && "flex-col")}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className={cn(
+              "text-[var(--text-secondary)] hover:text-[var(--text-primary)]",
+              navCollapsed ? "w-full justify-center px-2" : "flex-1 justify-start gap-2"
+            )}
+            onClick={toggleTerminal}
+            title="터미널 (Ctrl+`)"
+          >
+            <Terminal className="h-4 w-4 shrink-0" />
+            {!navCollapsed && <span className="text-xs">터미널</span>}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className={cn(
+              "shrink-0 text-[var(--text-muted)] hover:text-[var(--text-secondary)]",
+              navCollapsed ? "w-full justify-center px-2" : "px-2"
+            )}
+            onClick={() => window.open("/claude/chat", "_blank")}
+            title="터미널 새 탭으로 열기"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+          </Button>
+        </div>
 
         <Button
           variant="ghost"

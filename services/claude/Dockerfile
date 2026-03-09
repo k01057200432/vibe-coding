@@ -6,8 +6,6 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=1 go build -o /app/claude-server .
 
-FROM ghcr.io/astral-sh/uv:latest AS uv
-
 FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -25,8 +23,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=builder /app/claude-server /app/claude-server
 COPY --from=builder /usr/local/go /usr/local/go
-COPY --from=uv /uv /usr/local/bin/uv
-COPY --from=uv /uvx /usr/local/bin/uvx
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 

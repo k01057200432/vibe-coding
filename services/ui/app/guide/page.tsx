@@ -363,18 +363,19 @@ export default function GuidePage() {
         </h2>
         <div className="obsidian-card font-mono text-xs" style={{ color: "var(--text-secondary)" }}>
           <pre className="overflow-x-auto whitespace-pre" style={{ lineHeight: "1.8" }}>
-{`Browser (:8080)
-  │
-Caddy (리버스 프록시)
-  ├── /          → UI (Next.js :3000)
-  └── /claude/*  → Claude Server (Go :8081)
-                      ├── WebSocket 터미널
-                      ├── Claude CLI (PTY)
-                      └── /workspace ← 모노레포 bind mount`}
+{`docker-compose.yml
+  ├── caddy   :8080  ← 브라우저 진입점
+  ├── ui             Next.js (빌드된 정적 서버)
+  └── claude         Go 백엔드 + Claude CLI
+                       └── .:/workspace (모노레포 bind mount)`}
           </pre>
         </div>
         <div className="obsidian-card space-y-3">
           {[
+            {
+              title: "세 개의 서비스",
+              desc: "docker compose up -d --build 한 줄로 caddy, ui, claude 세 컨테이너가 함께 뜹니다. 외부에 노출되는 포트는 8080 하나뿐입니다.",
+            },
             {
               title: "Bind Mount",
               desc: "모노레포 전체(.:/workspace)가 Claude 컨테이너에 마운트됩니다. Claude가 수정한 파일은 호스트에 바로 반영됩니다.",
@@ -386,10 +387,6 @@ Caddy (리버스 프록시)
             {
               title: "프로덕션 빌드",
               desc: "UI는 dev server가 아닌 npm run build && npm start로 실행됩니다. 코드 변경 후 재빌드해야 반영되는 이유입니다.",
-            },
-            {
-              title: "Caddy",
-              desc: "경로 기반 프록시로 UI와 Claude 서버를 하나의 포트(8080)로 통합합니다. 도메인 설정 시 Let's Encrypt SSL을 자동 발급합니다.",
             },
           ].map((item, i) => (
             <div key={i} className="space-y-1">
@@ -463,8 +460,8 @@ Caddy (리버스 프록시)
               icon: BellRing,
               accent: "var(--accent-purple)",
               glow: "rgba(167, 139, 250, 0.12)",
-              title: "홈 화면 아이콘",
-              desc: "앱 아이콘이 홈 화면에 표시됩니다. 다른 앱들 사이에 Vibe Coding이 나란히 놓입니다.",
+              title: "Push 알림",
+              desc: "Claude가 작업을 완료했을 때 알림을 보내도록 구현할 수 있습니다. 화면을 보지 않아도 완료를 바로 알 수 있습니다.",
             },
           ].map((item, i) => (
             <div
