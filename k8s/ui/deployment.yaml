@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vibe-ui
+  namespace: vibe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vibe-ui
+  template:
+    metadata:
+      labels:
+        app: vibe-ui
+    spec:
+      containers:
+        - name: ui
+          image: git.gobau.dev/k00432/vibe-ui:latest
+          command: ["npm", "run", "dev"]
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DEMO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: vibe-secrets
+                  key: demo-username
+            - name: DEMO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: vibe-secrets
+                  key: demo-password
+            - name: NEXT_PUBLIC_CLAUDE_URL
+              value: /claude
+          volumeMounts:
+            - name: ui-source
+              mountPath: /app/app
+              subPath: app
+            - name: ui-source
+              mountPath: /app/components
+              subPath: components
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+      volumes:
+        - name: ui-source
+          persistentVolumeClaim:
+            claimName: vibe-ui-source
