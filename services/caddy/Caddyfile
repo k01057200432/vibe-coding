@@ -1,0 +1,8 @@
+:80 {
+	handle /claude/* {
+		reverse_proxy claude:8081
+	}
+	handle {
+		reverse_proxy ui:3000
+	}
+}

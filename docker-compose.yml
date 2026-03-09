@@ -1,10 +1,10 @@
 services:
   caddy:
-    image: caddy:latest
+    build:
+      context: ./services/caddy
+      dockerfile: Dockerfile
     ports:
       - "8080:80"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
     depends_on:
       - ui
       - claude
