@@ -11,4 +11,4 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npm run build && node .next/standalone/server.js"]
+CMD ["sh", "-c", "npm run build && npm start"]
