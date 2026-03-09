@@ -65,13 +65,13 @@ export default function GuidePage() {
               </p>
               <div className="space-y-1.5">
                 <code
-                  className="block overflow-x-auto rounded px-3 py-2 font-mono text-xs"
+                  className="block break-all rounded px-3 py-2 font-mono text-xs"
                   style={{ background: "var(--bg-base)", border: "1px solid var(--border-subtle)", color: "var(--accent-bright)" }}
                 >
                   git clone https://github.com/your-username/vibe-coding.git
                 </code>
                 <code
-                  className="block overflow-x-auto rounded px-3 py-2 font-mono text-xs"
+                  className="block break-all rounded px-3 py-2 font-mono text-xs"
                   style={{ background: "var(--bg-base)", border: "1px solid var(--border-subtle)", color: "var(--accent-bright)" }}
                 >
                   cd vibe-coding && cp .env.example .env
@@ -124,13 +124,13 @@ export default function GuidePage() {
                 <div className="space-y-1">
                   <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>① 로컬에서 CLI 설치 후 토큰 발급</p>
                   <code
-                    className="block rounded px-2 py-1.5 font-mono text-xs"
+                    className="block break-all rounded px-2 py-1.5 font-mono text-xs"
                     style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)", color: "var(--accent-bright)" }}
                   >
                     curl -fsSL https://claude.ai/install.sh | bash
                   </code>
                   <code
-                    className="block rounded px-2 py-1.5 font-mono text-xs"
+                    className="block break-all rounded px-2 py-1.5 font-mono text-xs"
                     style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)", color: "var(--accent-bright)" }}
                   >
                     claude setup-token
@@ -139,7 +139,7 @@ export default function GuidePage() {
                 <div className="space-y-1">
                   <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>② 발급된 토큰을 .env에 붙여넣기</p>
                   <code
-                    className="block rounded px-2 py-1.5 font-mono text-xs"
+                    className="block break-all rounded px-2 py-1.5 font-mono text-xs"
                     style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)", color: "var(--accent-bright)" }}
                   >
                     CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-...
@@ -167,7 +167,7 @@ export default function GuidePage() {
                 <div className="space-y-1">
                   <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>아래 스텝 3 실행 후 내장 터미널에서:</p>
                   <code
-                    className="block rounded px-2 py-1.5 font-mono text-xs"
+                    className="block break-all rounded px-2 py-1.5 font-mono text-xs"
                     style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)", color: "var(--accent-bright)" }}
                   >
                     claude login
@@ -209,7 +209,7 @@ export default function GuidePage() {
                 3. 실행
               </p>
               <code
-                className="block overflow-x-auto rounded px-3 py-2 font-mono text-xs"
+                className="block break-all rounded px-3 py-2 font-mono text-xs"
                 style={{ background: "var(--bg-base)", border: "1px solid var(--border-subtle)", color: "var(--accent-bright)" }}
               >
                 docker compose up -d --build
@@ -298,7 +298,7 @@ export default function GuidePage() {
                 Claude에게 아래 명령어를 실행해달라고 하면 됩니다.
               </p>
               <code
-                className="block overflow-x-auto rounded px-3 py-2 font-mono text-xs"
+                className="block break-all rounded px-3 py-2 font-mono text-xs"
                 style={{ background: "var(--bg-base)", border: "1px solid var(--border-subtle)", color: "var(--accent-bright)" }}
               >
                 docker compose build ui && docker compose up -d --force-recreate ui
@@ -363,7 +363,7 @@ export default function GuidePage() {
           인프라 원리
         </h2>
         <div className="obsidian-card font-mono text-xs" style={{ color: "var(--text-secondary)" }}>
-          <pre className="overflow-x-auto whitespace-pre" style={{ lineHeight: "1.8" }}>
+          <pre className="whitespace-pre-wrap break-all" style={{ lineHeight: "1.8" }}>
 {`docker-compose.yml
   ├── caddy   :8080  ← 브라우저 진입점
   ├── ui             Next.js (빌드된 정적 서버)
@@ -452,7 +452,7 @@ export default function GuidePage() {
               2. .env에 토큰 추가
             </p>
             <code
-              className="block overflow-x-auto rounded px-3 py-2 font-mono text-xs"
+              className="block break-all rounded px-3 py-2 font-mono text-xs"
               style={{
                 background: "var(--bg-base)",
                 border: "1px solid var(--border-subtle)",
@@ -468,7 +468,7 @@ export default function GuidePage() {
               3. 컨테이너 재시작
             </p>
             <code
-              className="block overflow-x-auto rounded px-3 py-2 font-mono text-xs"
+              className="block break-all rounded px-3 py-2 font-mono text-xs"
               style={{
                 background: "var(--bg-base)",
                 border: "1px solid var(--border-subtle)",
