@@ -119,7 +119,7 @@ export default function AuthGuidePage() {
           Pro 플랜 — 터미널에서 로그인
         </h2>
         <div
-          className="obsidian-card flex items-start gap-4"
+          className="obsidian-card flex items-start gap-3 md:gap-4"
           style={{ borderLeft: "2px solid var(--accent-blue)" }}
         >
           <div
@@ -136,7 +136,7 @@ export default function AuthGuidePage() {
               로컬 PC에 별도 설치 없이, 사이드바 하단 <strong>터미널</strong> 버튼을 눌러 아래 명령을 입력하면 됩니다.
             </p>
             <code
-              className="block rounded px-3 py-2 font-mono text-xs"
+              className="block overflow-x-auto rounded px-3 py-2 font-mono text-xs"
               style={{
                 background: "var(--bg-base)",
                 border: "1px solid var(--border-subtle)",
@@ -159,7 +159,7 @@ export default function AuthGuidePage() {
           Max / Team / Enterprise — 토큰 설정
         </h2>
         <div
-          className="obsidian-card flex items-start gap-4"
+          className="obsidian-card flex items-start gap-3 md:gap-4"
           style={{ borderLeft: "2px solid var(--accent)" }}
         >
           <div
@@ -203,7 +203,7 @@ export default function AuthGuidePage() {
             OAuth 로그인은 일정 기간 후 만료됩니다. Claude가 인증 오류를 낼 경우 터미널에서 다시 실행하세요.
           </p>
           <code
-            className="block rounded px-3 py-2 font-mono text-xs"
+            className="block overflow-x-auto rounded px-3 py-2 font-mono text-xs"
             style={{
               background: "var(--bg-base)",
               border: "1px solid var(--border-subtle)",

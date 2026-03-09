@@ -46,7 +46,7 @@ export default function GuidePage() {
         <div className="space-y-2">
           {/* Step 1: Fork & Clone */}
           <div
-            className="obsidian-card flex items-start gap-4"
+            className="obsidian-card flex items-start gap-3 md:gap-4"
             style={{ borderLeft: "2px solid var(--accent-blue)" }}
           >
             <div
@@ -64,13 +64,13 @@ export default function GuidePage() {
               </p>
               <div className="space-y-1.5">
                 <code
-                  className="block rounded px-3 py-2 font-mono text-xs"
+                  className="block overflow-x-auto rounded px-3 py-2 font-mono text-xs"
                   style={{ background: "var(--bg-base)", border: "1px solid var(--border-subtle)", color: "var(--accent-bright)" }}
                 >
                   git clone https://github.com/your-username/vibe-coding.git
                 </code>
                 <code
-                  className="block rounded px-3 py-2 font-mono text-xs"
+                  className="block overflow-x-auto rounded px-3 py-2 font-mono text-xs"
                   style={{ background: "var(--bg-base)", border: "1px solid var(--border-subtle)", color: "var(--accent-bright)" }}
                 >
                   cd vibe-coding && cp .env.example .env
@@ -194,7 +194,7 @@ export default function GuidePage() {
 
           {/* Step 3: Run */}
           <div
-            className="obsidian-card flex items-start gap-4"
+            className="obsidian-card flex items-start gap-3 md:gap-4"
             style={{ borderLeft: "2px solid var(--profit)" }}
           >
             <div
@@ -208,7 +208,7 @@ export default function GuidePage() {
                 3. 실행
               </p>
               <code
-                className="block rounded px-3 py-2 font-mono text-xs"
+                className="block overflow-x-auto rounded px-3 py-2 font-mono text-xs"
                 style={{ background: "var(--bg-base)", border: "1px solid var(--border-subtle)", color: "var(--accent-bright)" }}
               >
                 docker compose up -d --build
@@ -229,7 +229,7 @@ export default function GuidePage() {
 
         <div className="space-y-2">
           <div
-            className="obsidian-card flex items-start gap-4"
+            className="obsidian-card flex items-start gap-3 md:gap-4"
             style={{ borderLeft: "2px solid var(--accent)" }}
           >
             <div
@@ -254,7 +254,7 @@ export default function GuidePage() {
           </div>
 
           <div
-            className="obsidian-card flex items-start gap-4"
+            className="obsidian-card flex items-start gap-3 md:gap-4"
             style={{ borderLeft: "2px solid var(--profit)" }}
           >
             <div
@@ -279,7 +279,7 @@ export default function GuidePage() {
           </div>
 
           <div
-            className="obsidian-card flex items-start gap-4"
+            className="obsidian-card flex items-start gap-3 md:gap-4"
             style={{ borderLeft: "2px solid var(--accent-amber)" }}
           >
             <div
@@ -297,7 +297,7 @@ export default function GuidePage() {
                 Claude에게 아래 명령어를 실행해달라고 하면 됩니다.
               </p>
               <code
-                className="block rounded px-3 py-2 font-mono text-xs"
+                className="block overflow-x-auto rounded px-3 py-2 font-mono text-xs"
                 style={{ background: "var(--bg-base)", border: "1px solid var(--border-subtle)", color: "var(--accent-bright)" }}
               >
                 docker compose build ui && docker compose up -d --force-recreate ui

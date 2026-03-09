@@ -40,8 +40,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center py-20">
-      <div className="w-full max-w-sm space-y-6">
+    <div className="flex flex-1 flex-col items-center">
+      <div className="w-full max-w-sm space-y-6 px-6 md:px-0">
         <div className="flex flex-col items-center gap-3 text-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--accent-glow)] text-[var(--accent)]">
             <Terminal className="h-6 w-6" />

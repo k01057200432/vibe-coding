@@ -29,7 +29,7 @@ export default function HomePage() {
 
   if (!loggedIn) {
     return (
-      <div className="flex flex-col items-center gap-8">
+      <div className="flex flex-col items-center gap-8 px-6">
         <div className="flex flex-col items-center gap-4 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--accent-glow)] text-[var(--accent)]">
             <Terminal className="h-8 w-8" />
@@ -54,7 +54,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-6">
+    <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4">
       {/* 토큰 미설정 안내 배너 */}
       {authOk === false && (
         <div

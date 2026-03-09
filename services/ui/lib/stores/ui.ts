@@ -32,6 +32,12 @@ interface UIStore {
   // Command Palette
   commandPaletteOpen: boolean;
   setCommandPaletteOpen: (open: boolean) => void;
+
+  // Auto Refresh
+  autoRefresh: boolean;
+  autoRefreshInterval: number;
+  toggleAutoRefresh: () => void;
+  setAutoRefreshInterval: (sec: number) => void;
 }
 
 export const useUIStore = create<UIStore>((set) => ({
@@ -60,4 +66,9 @@ export const useUIStore = create<UIStore>((set) => ({
 
   commandPaletteOpen: false,
   setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),
+
+  autoRefresh: false,
+  autoRefreshInterval: 5,
+  toggleAutoRefresh: () => set((s) => ({ autoRefresh: !s.autoRefresh })),
+  setAutoRefreshInterval: (sec) => set({ autoRefreshInterval: sec }),
 }));

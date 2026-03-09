@@ -13,7 +13,7 @@ import {
 
 const CodeBlock = ({ children }: { children: string }) => (
   <code
-    className="block rounded px-3 py-2 font-mono text-xs"
+    className="block overflow-x-auto rounded px-3 py-2 font-mono text-xs"
     style={{
       background: "var(--bg-base)",
       border: "1px solid var(--border-subtle)",
@@ -56,7 +56,7 @@ export default function DeployPage() {
       <div className="space-y-2">
         {/* 1. Instance */}
         <div
-          className="obsidian-card flex items-start gap-4"
+          className="obsidian-card flex items-start gap-3 md:gap-4"
           style={{ borderLeft: "2px solid var(--accent-blue)" }}
         >
           <div
@@ -93,7 +93,7 @@ export default function DeployPage() {
 
         {/* 2. Firewall */}
         <div
-          className="obsidian-card flex items-start gap-4"
+          className="obsidian-card flex items-start gap-3 md:gap-4"
           style={{ borderLeft: "2px solid var(--accent-amber)" }}
         >
           <div
@@ -150,7 +150,7 @@ export default function DeployPage() {
 
         {/* 3. Docker */}
         <div
-          className="obsidian-card flex items-start gap-4"
+          className="obsidian-card flex items-start gap-3 md:gap-4"
           style={{ borderLeft: "2px solid var(--accent-purple)" }}
         >
           <div
@@ -179,7 +179,7 @@ export default function DeployPage() {
 
         {/* 4. Clone */}
         <div
-          className="obsidian-card flex items-start gap-4"
+          className="obsidian-card flex items-start gap-3 md:gap-4"
           style={{ borderLeft: "2px solid var(--accent)" }}
         >
           <div
@@ -203,7 +203,7 @@ export default function DeployPage() {
 
         {/* 5. .env */}
         <div
-          className="obsidian-card flex items-start gap-4"
+          className="obsidian-card flex items-start gap-3 md:gap-4"
           style={{ borderLeft: "2px solid var(--accent-purple)" }}
         >
           <div
@@ -255,7 +255,7 @@ export default function DeployPage() {
 
         {/* 6. Run */}
         <div
-          className="obsidian-card flex items-start gap-4"
+          className="obsidian-card flex items-start gap-3 md:gap-4"
           style={{ borderLeft: "2px solid var(--profit)" }}
         >
           <div
@@ -303,7 +303,7 @@ export default function DeployPage() {
 
           {/* DNS */}
           <div
-            className="obsidian-card flex items-start gap-4"
+            className="obsidian-card flex items-start gap-3 md:gap-4"
             style={{ borderLeft: "2px solid var(--accent-blue)" }}
           >
             <div
@@ -406,7 +406,7 @@ export default function DeployPage() {
 
           {/* OCI 80/443 포트 추가 */}
           <div
-            className="obsidian-card flex items-start gap-4"
+            className="obsidian-card flex items-start gap-3 md:gap-4"
             style={{ borderLeft: "2px solid var(--accent-amber)" }}
           >
             <div
@@ -436,7 +436,7 @@ export default function DeployPage() {
 
           {/* docker-compose & Caddyfile 수정 */}
           <div
-            className="obsidian-card flex items-start gap-4"
+            className="obsidian-card flex items-start gap-3 md:gap-4"
             style={{ borderLeft: "2px solid var(--accent-purple)" }}
           >
             <div
@@ -457,7 +457,7 @@ export default function DeployPage() {
                 services/caddy/Caddyfile:
               </p>
               <div
-                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre"
+                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre overflow-x-auto"
                 style={{
                   background: "var(--bg-base)",
                   border: "1px solid var(--border-subtle)",
@@ -475,7 +475,7 @@ export default function DeployPage() {
                 docker-compose.yml — caddy 포트 변경:
               </p>
               <div
-                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre"
+                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre overflow-x-auto"
                 style={{
                   background: "var(--bg-base)",
                   border: "1px solid var(--border-subtle)",
@@ -509,7 +509,7 @@ export default function DeployPage() {
 
           {/* PWA */}
           <div
-            className="obsidian-card flex items-start gap-4"
+            className="obsidian-card flex items-start gap-3 md:gap-4"
             style={{ borderLeft: "2px solid var(--profit)" }}
           >
             <div
@@ -553,7 +553,7 @@ export default function DeployPage() {
 
           {/* 개요 */}
           <div
-            className="obsidian-card flex items-start gap-4"
+            className="obsidian-card flex items-start gap-3 md:gap-4"
             style={{ borderLeft: "2px solid var(--accent-purple)" }}
           >
             <div
@@ -589,7 +589,7 @@ export default function DeployPage() {
 
           {/* DNS 와일드카드 설정 */}
           <div
-            className="obsidian-card flex items-start gap-4"
+            className="obsidian-card flex items-start gap-3 md:gap-4"
             style={{ borderLeft: "2px solid var(--accent-blue)" }}
           >
             <div
@@ -620,7 +620,7 @@ export default function DeployPage() {
 
           {/* Caddyfile 방법 A — 단순 분리 */}
           <div
-            className="obsidian-card flex items-start gap-4"
+            className="obsidian-card flex items-start gap-3 md:gap-4"
             style={{ borderLeft: "2px solid var(--accent)" }}
           >
             <div
@@ -645,7 +645,7 @@ export default function DeployPage() {
                 서브도메인마다 사이트 블록을 따로 작성합니다. 각각 Let&apos;s Encrypt 인증서가 자동 발급됩니다.
               </p>
               <div
-                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre"
+                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre overflow-x-auto"
                 style={{
                   background: "var(--bg-base)",
                   border: "1px solid var(--border-subtle)",
@@ -677,7 +677,7 @@ api.example.com {
 
           {/* Caddyfile 방법 B — 와일드카드 인증서 */}
           <div
-            className="obsidian-card flex items-start gap-4"
+            className="obsidian-card flex items-start gap-3 md:gap-4"
             style={{ borderLeft: "2px solid var(--accent-amber)" }}
           >
             <div
@@ -703,7 +703,7 @@ api.example.com {
                 단, 와일드카드 HTTPS 인증서는 DNS-01 챌린지가 필요해 Cloudflare DNS + API 토큰이 있어야 합니다.
               </p>
               <div
-                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre"
+                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre overflow-x-auto"
                 style={{
                   background: "var(--bg-base)",
                   border: "1px solid var(--border-subtle)",
@@ -771,7 +771,7 @@ api.example.com {
           Claude에게 바로 시키기
         </h2>
         <div
-          className="obsidian-card flex items-start gap-4"
+          className="obsidian-card flex items-start gap-3 md:gap-4"
           style={{ borderLeft: "2px solid var(--accent)" }}
         >
           <div
@@ -836,7 +836,7 @@ api.example.com {
 
           {/* 무료 — DuckDNS */}
           <div
-            className="obsidian-card flex items-start gap-4"
+            className="obsidian-card flex items-start gap-3 md:gap-4"
             style={{ borderLeft: "2px solid var(--profit)" }}
           >
             <div
@@ -877,7 +877,7 @@ api.example.com {
 
           {/* 유료 도메인 구매 후 서브도메인 */}
           <div
-            className="obsidian-card flex items-start gap-4"
+            className="obsidian-card flex items-start gap-3 md:gap-4"
             style={{ borderLeft: "2px solid var(--accent-blue)" }}
           >
             <div
@@ -921,7 +921,7 @@ api.example.com {
 
           {/* Caddyfile 반영 */}
           <div
-            className="obsidian-card flex items-start gap-4"
+            className="obsidian-card flex items-start gap-3 md:gap-4"
             style={{ borderLeft: "2px solid var(--accent-purple)" }}
           >
             <div
@@ -938,7 +938,7 @@ api.example.com {
                 등록한 서브도메인을 <code className="font-mono" style={{ color: "var(--accent-bright)" }}>services/caddy/Caddyfile</code>에 입력합니다.
               </p>
               <div
-                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre"
+                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre overflow-x-auto"
                 style={{
                   background: "var(--bg-base)",
                   border: "1px solid var(--border-subtle)",

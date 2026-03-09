@@ -3,13 +3,25 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Home, Terminal as TerminalIcon, LogOut } from "lucide-react";
+import {
+  Home,
+  Terminal as TerminalIcon,
+  LogOut,
+  BookOpen,
+  Sparkles,
+  Cloud,
+  CreditCard,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useUIStore } from "@/lib/stores/ui";
 
 const tabs = [
   { href: "/", icon: Home, label: "홈" },
+  { href: "/pro", icon: CreditCard, label: "인증" },
+  { href: "/guide", icon: BookOpen, label: "사용법" },
   { href: "/__terminal__", icon: TerminalIcon, label: "터미널" },
+  { href: "/examples", icon: Sparkles, label: "활용" },
+  { href: "/deploy", icon: Cloud, label: "배포" },
   { href: "/__logout__", icon: LogOut, label: "로그아웃" },
 ];
 
