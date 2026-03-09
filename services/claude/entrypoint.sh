@@ -7,11 +7,13 @@ if [ -d "$HOME" ] && [ "$(stat -c %u "$HOME" 2>/dev/null)" != "$(id -u)" ]; then
   sudo chown -R "$(id -u):$(id -g)" "$HOME"
 fi
 
-# Ensure onboarding is always completed (skip theme selection prompt)
-if [ ! -f "$HOME/.claude.json" ]; then
-  echo '{"hasCompletedOnboarding":true,"theme":"dark"}' > "$HOME/.claude.json"
-else
-  python3 -c "
+# Skip onboarding only when OAuth token is set (Max/Team/Enterprise)
+# Without token, let CLI show its own onboarding/login flow
+if [ -n "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
+  if [ ! -f "$HOME/.claude.json" ]; then
+    echo '{"hasCompletedOnboarding":true,"theme":"dark"}' > "$HOME/.claude.json"
+  else
+    python3 -c "
 import json
 with open('$HOME/.claude.json') as f:
     d = json.load(f)
@@ -21,6 +23,7 @@ if not d.get('hasCompletedOnboarding'):
     with open('$HOME/.claude.json', 'w') as f:
         json.dump(d, f, indent=2)
 " 2>/dev/null || true
+  fi
 fi
 
 # Install Claude CLI if missing or broken
