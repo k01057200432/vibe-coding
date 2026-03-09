@@ -49,43 +49,38 @@ func (h *Handler) HandleChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if req.Mode == "" {
-		req.Mode = "advisory"
+		req.Mode = "admin"
 	}
-
-	giteaToken, _ := h.store.GetSetting(r.Context(), "gitea_api_token")
 
 	binary := "claude"
 	if v := os.Getenv("CLAUDE_BINARY"); v != "" {
 		binary = v
 	}
-	repoDir := "/home/trading/trading-platform"
-	if v := os.Getenv("REPO_DIR"); v != "" {
-		repoDir = v
+	workDir := "/workspace"
+	if v := os.Getenv("WORKSPACE_DIR"); v != "" {
+		workDir = v
 	}
 
-	hasGitea := giteaToken != ""
-	sp := claude.BuildSystemPrompt(req.Mode, repoDir, hasGitea)
-	tools := claude.AllowedTools(req.Mode, hasGitea)
+	sp := claude.BuildSystemPrompt(req.Mode)
+	tools := claude.AllowedTools(req.Mode)
 
 	args := []string{
 		"-p", req.Prompt,
 		"--output-format", "text",
 		"--system-prompt", sp,
-		"--allowedTools", tools,
+	}
+	if tools != "" {
+		args = append(args, "--allowedTools", tools)
 	}
 
 	cmd := exec.CommandContext(r.Context(), binary, args...)
 
-	// Always set working directory so Claude CLI picks up project MCP config.
-	if info, err := os.Stat(repoDir); err == nil && info.IsDir() {
-		cmd.Dir = repoDir
+	if info, err := os.Stat(workDir); err == nil && info.IsDir() {
+		cmd.Dir = workDir
 	}
 
 	env := os.Environ()
 	env = append(env, "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1")
-	if hasGitea {
-		env = append(env, "GITEA_TOKEN="+giteaToken)
-	}
 	cmd.Env = env
 
 	var stdout, stderr bytes.Buffer

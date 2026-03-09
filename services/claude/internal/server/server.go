@@ -27,7 +27,6 @@ func New(mgr *session.Manager, repo store.Repository, logger *slog.Logger) http.
 	r.Route("/claude", func(r chi.Router) {
 		r.Get("/", handleChatPage)
 		r.Get("/chat", handleChatPage)
-		r.Get("/settings", handleSettingsPage)
 
 		r.Get("/fonts/{file}", handleFontFile)
 

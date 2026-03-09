@@ -21,16 +21,6 @@ func handleChatPage(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func handleSettingsPage(w http.ResponseWriter, r *http.Request) {
-	data, err := staticFiles.ReadFile("static/settings.html")
-	if err != nil {
-		http.Error(w, "page not found", http.StatusNotFound)
-		return
-	}
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Write(data)
-}
-
 func handleFontFile(w http.ResponseWriter, r *http.Request) {
 	file := chi.URLParam(r, "file")
 	data, err := staticFiles.ReadFile("static/fonts/" + file)

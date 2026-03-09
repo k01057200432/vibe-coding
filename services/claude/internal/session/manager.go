@@ -50,7 +50,7 @@ type InProcSub struct {
 	Ch chan []byte
 }
 
-// inProc holds a directly-spawned Claude CLI process (no tmux).
+// inProc holds a directly-spawned Claude CLI process.
 type inProc struct {
 	ptmx *os.File
 	cmd  *exec.Cmd
@@ -62,7 +62,6 @@ type inProc struct {
 }
 
 // broadcast reads from PTY and fans out to all subscribers + ring buffer.
-// Runs until PTY read error (process exit). Closes all subscriber channels on exit.
 func (p *inProc) broadcast() {
 	buf := make([]byte, 32768)
 	for {
@@ -76,7 +75,7 @@ func (p *inProc) broadcast() {
 			for sub := range p.subs {
 				select {
 				case sub.Ch <- data:
-				default: // slow consumer, drop
+				default:
 				}
 			}
 			p.subMu.Unlock()
@@ -95,11 +94,9 @@ func (p *inProc) broadcast() {
 
 // Manager manages Claude CLI sessions (in-process PTY).
 type Manager struct {
-	store     store.Repository
-	repoDir   string
-	binary    string
-	logger    *slog.Logger
-	cloneOnce sync.Once
+	store  store.Repository
+	binary string
+	logger *slog.Logger
 
 	mu    sync.Mutex
 	procs map[string]*inProc
@@ -107,92 +104,35 @@ type Manager struct {
 
 // NewManager creates a new session manager.
 func NewManager(repo store.Repository, logger *slog.Logger) *Manager {
-	repoDir := "/home/trading/trading"
-	if v := os.Getenv("REPO_DIR"); v != "" {
-		repoDir = v
-	}
 	binary := "claude"
 	if v := os.Getenv("CLAUDE_BINARY"); v != "" {
 		binary = v
 	}
 
-	// 서비스 시작 시 MCP 서버 등록
 	claude.SetupMCPServers()
 
 	return &Manager{
-		store:   repo,
-		repoDir: repoDir,
-		binary:  binary,
-		logger:  logger,
-		procs:   make(map[string]*inProc),
+		store:  repo,
+		binary: binary,
+		logger: logger,
+		procs:  make(map[string]*inProc),
 	}
-}
-
-// ensureRepo clones the monorepo if it doesn't exist yet.
-func (m *Manager) ensureRepo(ctx context.Context) {
-	m.cloneOnce.Do(func() {
-		gitDir := filepath.Join(m.repoDir, ".git")
-		if _, err := os.Stat(gitDir); err == nil {
-			m.logger.Info("repo already exists", "dir", m.repoDir)
-			return
-		}
-
-		giteaToken, _ := m.store.GetSetting(ctx, "gitea_api_token")
-		if giteaToken == "" {
-			os.MkdirAll(m.repoDir, 0775)
-			m.logger.Warn("no gitea token, created empty repo dir")
-			return
-		}
-
-		home := os.Getenv("HOME")
-		if home == "" {
-			home = "/home/trading"
-		}
-		credFile := filepath.Join(home, ".git-credentials")
-		os.WriteFile(credFile, []byte(fmt.Sprintf("https://%s:x-oauth-basic@git.gobau.dev\n", giteaToken)), 0600)
-		exec.Command("git", "config", "--global", "credential.helper", "store").Run()
-
-		m.logger.Info("cloning repo", "dir", m.repoDir)
-		cmd := exec.CommandContext(ctx, "git", "clone", "--recurse-submodules",
-			"https://git.gobau.dev/hw.kim/trading.git", m.repoDir)
-		if output, err := cmd.CombinedOutput(); err != nil {
-			m.logger.Error("repo clone failed", "err", err, "output", string(output))
-			return
-		}
-
-		m.logger.Info("repo cloned", "dir", m.repoDir)
-	})
 }
 
 // Create starts a new session running Claude CLI via in-process PTY.
 func (m *Manager) Create(ctx context.Context, name, mode, resumeMode string) (*store.Session, error) {
 	id := uuid.New().String()
 
-	m.ensureRepo(ctx)
-
-	giteaToken, _ := m.store.GetSetting(ctx, "gitea_api_token")
 	oauthToken := m.extractOAuthToken(ctx)
 
-	script := claude.BuildClaudeCmd(mode, giteaToken, oauthToken, m.repoDir, m.binary, resumeMode)
+	script := claude.BuildClaudeCmd(mode, oauthToken, m.binary, resumeMode)
 
 	scriptPath := filepath.Join(os.TempDir(), fmt.Sprintf("claude-%s.sh", id[:8]))
 	if err := os.WriteFile(scriptPath, []byte("#!/bin/bash\n"+script), 0755); err != nil {
 		return nil, fmt.Errorf("write script: %w", err)
 	}
 
-	var procCmd *exec.Cmd
-	if mode == "advisory" {
-		procCmd = exec.Command("sudo", "-u", "trading-advisory", "-H",
-			"env",
-			"PATH=/home/trading/.local/bin:/usr/local/bin:/usr/bin:/bin",
-			"HOME=/home/trading-advisory",
-			"TERM=xterm-256color",
-			"SHELL=/bin/bash",
-			"bash", scriptPath,
-		)
-	} else {
-		procCmd = exec.Command("bash", scriptPath)
-	}
+	procCmd := exec.Command("bash", scriptPath)
 	procCmd.Env = append(os.Environ(), "TERM=xterm-256color", "SHELL=/bin/bash")
 	ptmx, err := pty.StartWithSize(procCmd, &pty.Winsize{Cols: 200, Rows: 50})
 	if err != nil {
@@ -236,7 +176,6 @@ func (m *Manager) Create(ctx context.Context, name, mode, resumeMode string) (*s
 }
 
 // Subscribe registers a subscriber to an in-process session's output.
-// Returns the subscriber, replay buffer, and PTY file for writing input.
 func (m *Manager) Subscribe(id string) (*InProcSub, []byte, *os.File, error) {
 	m.mu.Lock()
 	p, ok := m.procs[id]
@@ -336,12 +275,6 @@ func (m *Manager) Kill(ctx context.Context, id string) error {
 	m.logger.Info("session killed", "id", id)
 	return nil
 }
-
-// RepoDir returns the configured repo directory.
-func (m *Manager) RepoDir() string { return m.repoDir }
-
-// Binary returns the configured claude binary path.
-func (m *Manager) Binary() string { return m.binary }
 
 // isInProcAlive checks if an in-process session is still running.
 func (m *Manager) isInProcAlive(id string) bool {
