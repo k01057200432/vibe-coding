@@ -13,7 +13,7 @@ import {
 
 const CodeBlock = ({ children }: { children: string }) => (
   <code
-    className="block overflow-x-auto rounded px-3 py-2 font-mono text-xs"
+    className="block break-all rounded px-3 py-2 font-mono text-xs"
     style={{
       background: "var(--bg-base)",
       border: "1px solid var(--border-subtle)",
@@ -223,7 +223,7 @@ export default function DeployPage() {
               필수 설정 항목:
             </p>
             <div
-              className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed overflow-x-auto"
+              className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed break-all"
               style={{
                 background: "var(--bg-base)",
                 border: "1px solid var(--border-subtle)",
@@ -335,7 +335,7 @@ export default function DeployPage() {
                     루트 도메인 — <span className="font-mono font-normal" style={{ color: "var(--accent-bright)" }}>example.com</span>
                   </p>
                   <div
-                    className="rounded-lg px-4 py-2.5 font-mono text-xs leading-relaxed overflow-x-auto"
+                    className="rounded-lg px-4 py-2.5 font-mono text-xs leading-relaxed break-all"
                     style={{ background: "var(--bg-base)", border: "1px solid var(--border-subtle)" }}
                   >
                     <div><span style={{ color: "var(--text-muted)" }}>Type: </span><span style={{ color: "var(--text-primary)" }}>A</span></div>
@@ -350,7 +350,7 @@ export default function DeployPage() {
                     서브도메인 — <span className="font-mono font-normal" style={{ color: "var(--accent-bright)" }}>vibe.example.com</span>
                   </p>
                   <div
-                    className="rounded-lg px-4 py-2.5 font-mono text-xs leading-relaxed overflow-x-auto"
+                    className="rounded-lg px-4 py-2.5 font-mono text-xs leading-relaxed break-all"
                     style={{ background: "var(--bg-base)", border: "1px solid var(--border-subtle)" }}
                   >
                     <div><span style={{ color: "var(--text-muted)" }}>Type: </span><span style={{ color: "var(--text-primary)" }}>A</span></div>
@@ -457,7 +457,7 @@ export default function DeployPage() {
                 services/caddy/Caddyfile:
               </p>
               <div
-                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre overflow-x-auto"
+                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre-wrap break-all"
                 style={{
                   background: "var(--bg-base)",
                   border: "1px solid var(--border-subtle)",
@@ -475,7 +475,7 @@ export default function DeployPage() {
                 docker-compose.yml — caddy 포트 변경:
               </p>
               <div
-                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre overflow-x-auto"
+                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre-wrap break-all"
                 style={{
                   background: "var(--bg-base)",
                   border: "1px solid var(--border-subtle)",
@@ -603,7 +603,7 @@ export default function DeployPage() {
                 1. DNS — 와일드카드 A 레코드 등록
               </p>
               <div
-                className="rounded-lg px-4 py-2.5 font-mono text-xs leading-relaxed overflow-x-auto"
+                className="rounded-lg px-4 py-2.5 font-mono text-xs leading-relaxed break-all"
                 style={{ background: "var(--bg-base)", border: "1px solid var(--border-subtle)" }}
               >
                 <div><span style={{ color: "var(--text-muted)" }}>Type: </span><span style={{ color: "var(--text-primary)" }}>A</span></div>
@@ -645,7 +645,7 @@ export default function DeployPage() {
                 서브도메인마다 사이트 블록을 따로 작성합니다. 각각 Let&apos;s Encrypt 인증서가 자동 발급됩니다.
               </p>
               <div
-                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre overflow-x-auto"
+                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre-wrap break-all"
                 style={{
                   background: "var(--bg-base)",
                   border: "1px solid var(--border-subtle)",
@@ -703,7 +703,7 @@ api.example.com {
                 단, 와일드카드 HTTPS 인증서는 DNS-01 챌린지가 필요해 Cloudflare DNS + API 토큰이 있어야 합니다.
               </p>
               <div
-                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre overflow-x-auto"
+                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre-wrap break-all"
                 style={{
                   background: "var(--bg-base)",
                   border: "1px solid var(--border-subtle)",
@@ -938,7 +938,7 @@ api.example.com {
                 등록한 서브도메인을 <code className="font-mono" style={{ color: "var(--accent-bright)" }}>services/caddy/Caddyfile</code>에 입력합니다.
               </p>
               <div
-                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre overflow-x-auto"
+                className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre-wrap break-all"
                 style={{
                   background: "var(--bg-base)",
                   border: "1px solid var(--border-subtle)",
