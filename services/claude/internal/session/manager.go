@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 	"sync"
 	"time"
 
@@ -94,7 +93,7 @@ func (p *inProc) broadcast() {
 	}
 }
 
-// Manager manages Claude CLI sessions (tmux or in-process).
+// Manager manages Claude CLI sessions (in-process PTY).
 type Manager struct {
 	store     store.Repository
 	repoDir   string
@@ -117,7 +116,7 @@ func NewManager(repo store.Repository, logger *slog.Logger) *Manager {
 		binary = v
 	}
 
-	// 서비스 시작 시 MCP 서버 등록 (admin/advisory 2개, 충돌 없음)
+	// 서비스 시작 시 MCP 서버 등록
 	claude.SetupMCPServers()
 
 	return &Manager{
@@ -165,124 +164,74 @@ func (m *Manager) ensureRepo(ctx context.Context) {
 	})
 }
 
-// Create starts a new session running Claude CLI.
-func (m *Manager) Create(ctx context.Context, name, mode, teammateMode, resumeMode string) (*store.Session, error) {
-	if teammateMode == "" {
-		teammateMode = "in-process"
-	}
-
+// Create starts a new session running Claude CLI via in-process PTY.
+func (m *Manager) Create(ctx context.Context, name, mode, resumeMode string) (*store.Session, error) {
 	id := uuid.New().String()
-	tmuxName := "claude-" + id[:8]
 
 	m.ensureRepo(ctx)
 
 	giteaToken, _ := m.store.GetSetting(ctx, "gitea_api_token")
 	oauthToken := m.extractOAuthToken(ctx)
 
-	script := claude.BuildClaudeCmd(mode, giteaToken, oauthToken, m.repoDir, m.binary, teammateMode, resumeMode)
+	script := claude.BuildClaudeCmd(mode, giteaToken, oauthToken, m.repoDir, m.binary, resumeMode)
 
 	scriptPath := filepath.Join(os.TempDir(), fmt.Sprintf("claude-%s.sh", id[:8]))
 	if err := os.WriteFile(scriptPath, []byte("#!/bin/bash\n"+script), 0755); err != nil {
 		return nil, fmt.Errorf("write script: %w", err)
 	}
 
-	if teammateMode == "in-process" {
-		var procCmd *exec.Cmd
-		if mode == "advisory" {
-			// advisory 모드: trading-advisory 유저로 격리 실행
-			procCmd = exec.Command("sudo", "-u", "trading-advisory", "-H",
-				"env",
-				"PATH=/home/trading/.local/bin:/usr/local/bin:/usr/bin:/bin",
-				"HOME=/home/trading-advisory",
-				"TERM=xterm-256color",
-				"SHELL=/bin/bash",
-				"bash", scriptPath,
-			)
-		} else {
-			procCmd = exec.Command("bash", scriptPath)
-		}
-		procCmd.Env = append(os.Environ(), "TERM=xterm-256color", "SHELL=/bin/bash")
-		ptmx, err := pty.StartWithSize(procCmd, &pty.Winsize{Cols: 200, Rows: 50})
-		if err != nil {
-			return nil, fmt.Errorf("pty start in-process: %w", err)
-		}
-
-		sess := &store.Session{
-			ID:           id,
-			Name:         name,
-			Mode:         mode,
-			TeammateMode: teammateMode,
-			TmuxName:     tmuxName,
-			Status:       "running",
-			CreatedAt:    time.Now(),
-		}
-		if err := m.store.SaveSession(ctx, sess); err != nil {
-			ptmx.Close()
-			procCmd.Process.Kill()
-			return nil, fmt.Errorf("save session: %w", err)
-		}
-
-		p := &inProc{
-			ptmx: ptmx,
-			cmd:  procCmd,
-			done: make(chan struct{}),
-			subs: make(map[*InProcSub]struct{}),
-			buf:  ringBuf{max: ringBufMax},
-		}
-
-		go func() {
-			procCmd.Wait()
-			close(p.done)
-		}()
-
-		go p.broadcast()
-
-		m.mu.Lock()
-		m.procs[id] = p
-		m.mu.Unlock()
-
-		m.logger.Info("session created (in-process)", "id", id, "name", name, "mode", mode)
-		return sess, nil
-	}
-
-	// tmux mode
-	var tmuxArgs []string
+	var procCmd *exec.Cmd
 	if mode == "advisory" {
-		tmuxArgs = []string{"new-session", "-d", "-s", tmuxName,
-			"-x", "200", "-y", "50",
-			"sudo", "-u", "trading-advisory", "-H",
+		procCmd = exec.Command("sudo", "-u", "trading-advisory", "-H",
 			"env",
 			"PATH=/home/trading/.local/bin:/usr/local/bin:/usr/bin:/bin",
 			"HOME=/home/trading-advisory",
 			"TERM=xterm-256color",
 			"SHELL=/bin/bash",
 			"bash", scriptPath,
-		}
+		)
 	} else {
-		tmuxArgs = []string{"new-session", "-d", "-s", tmuxName,
-			"-x", "200", "-y", "50", "bash", scriptPath}
+		procCmd = exec.Command("bash", scriptPath)
 	}
-	cmd := exec.CommandContext(ctx, "tmux", tmuxArgs...)
-	cmd.Env = append(os.Environ(), "SHELL=/bin/bash")
-	if output, err := cmd.CombinedOutput(); err != nil {
-		return nil, fmt.Errorf("tmux new-session: %w (%s)", err, strings.TrimSpace(string(output)))
+	procCmd.Env = append(os.Environ(), "TERM=xterm-256color", "SHELL=/bin/bash")
+	ptmx, err := pty.StartWithSize(procCmd, &pty.Winsize{Cols: 200, Rows: 50})
+	if err != nil {
+		return nil, fmt.Errorf("pty start: %w", err)
 	}
 
 	sess := &store.Session{
-		ID:           id,
-		Name:         name,
-		Mode:         mode,
-		TeammateMode: teammateMode,
-		TmuxName:     tmuxName,
-		Status:       "running",
-		CreatedAt:    time.Now(),
+		ID:        id,
+		Name:      name,
+		Mode:      mode,
+		Status:    "running",
+		CreatedAt: time.Now(),
 	}
 	if err := m.store.SaveSession(ctx, sess); err != nil {
-		exec.Command("tmux", "kill-session", "-t", tmuxName).Run()
+		ptmx.Close()
+		procCmd.Process.Kill()
 		return nil, fmt.Errorf("save session: %w", err)
 	}
 
-	m.logger.Info("session created", "id", id, "name", name, "mode", mode, "tmux", tmuxName)
+	p := &inProc{
+		ptmx: ptmx,
+		cmd:  procCmd,
+		done: make(chan struct{}),
+		subs: make(map[*InProcSub]struct{}),
+		buf:  ringBuf{max: ringBufMax},
+	}
+
+	go func() {
+		procCmd.Wait()
+		close(p.done)
+	}()
+
+	go p.broadcast()
+
+	m.mu.Lock()
+	m.procs[id] = p
+	m.mu.Unlock()
+
+	m.logger.Info("session created", "id", id, "name", name, "mode", mode)
 	return sess, nil
 }
 
@@ -293,12 +242,12 @@ func (m *Manager) Subscribe(id string) (*InProcSub, []byte, *os.File, error) {
 	p, ok := m.procs[id]
 	m.mu.Unlock()
 	if !ok {
-		return nil, nil, nil, fmt.Errorf("in-process session %s not found", id)
+		return nil, nil, nil, fmt.Errorf("session %s not found", id)
 	}
 
 	select {
 	case <-p.done:
-		return nil, nil, nil, fmt.Errorf("in-process session %s has exited", id)
+		return nil, nil, nil, fmt.Errorf("session %s has exited", id)
 	default:
 	}
 
@@ -326,43 +275,27 @@ func (m *Manager) Unsubscribe(id string, sub *InProcSub) {
 	p.subMu.Unlock()
 }
 
-// List returns all sessions, syncing status with tmux/in-process liveness.
+// List returns all sessions, syncing status with in-process liveness.
 func (m *Manager) List(ctx context.Context) ([]store.Session, error) {
 	sessions, err := m.store.ListSessions(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	active := m.activeTmuxSessions()
-
 	alive := sessions[:0]
 	for i := range sessions {
 		if sessions[i].Status == "running" {
-			if sessions[i].TeammateMode == "in-process" {
-				if !m.isInProcAlive(sessions[i].ID) {
-					if time.Since(sessions[i].CreatedAt) < sessionGracePeriod {
-						alive = append(alive, sessions[i])
-						continue
-					}
-					m.logger.Info("auto-deleting stopped in-process session", "id", sessions[i].ID)
-					m.cleanupInProc(sessions[i].ID)
-					m.store.DeleteSession(ctx, sessions[i].ID)
+			if !m.isInProcAlive(sessions[i].ID) {
+				if time.Since(sessions[i].CreatedAt) < sessionGracePeriod {
+					alive = append(alive, sessions[i])
 					continue
 				}
-				sessions[i].CurrentCommand = "claude"
-			} else {
-				cmd, ok := active[sessions[i].TmuxName]
-				if !ok {
-					if time.Since(sessions[i].CreatedAt) < sessionGracePeriod {
-						alive = append(alive, sessions[i])
-						continue
-					}
-					m.logger.Info("auto-deleting stopped session", "id", sessions[i].ID, "name", sessions[i].Name)
-					m.store.DeleteSession(ctx, sessions[i].ID)
-					continue
-				}
-				sessions[i].CurrentCommand = cmd
+				m.logger.Info("auto-deleting stopped session", "id", sessions[i].ID)
+				m.cleanupInProc(sessions[i].ID)
+				m.store.DeleteSession(ctx, sessions[i].ID)
+				continue
 			}
+			sessions[i].CurrentCommand = "claude"
 		}
 		if sessions[i].Status == "stopped" {
 			m.store.DeleteSession(ctx, sessions[i].ID)
@@ -381,23 +314,12 @@ func (m *Manager) Get(ctx context.Context, id string) (*store.Session, error) {
 	}
 
 	if sess.Status == "running" {
-		if sess.TeammateMode == "in-process" {
-			if !m.isInProcAlive(sess.ID) {
-				sess.Status = "stopped"
-				m.cleanupInProc(sess.ID)
-				m.store.UpdateSessionStatus(ctx, sess.ID, "stopped")
-			} else {
-				sess.CurrentCommand = "claude"
-			}
+		if !m.isInProcAlive(sess.ID) {
+			sess.Status = "stopped"
+			m.cleanupInProc(sess.ID)
+			m.store.UpdateSessionStatus(ctx, sess.ID, "stopped")
 		} else {
-			active := m.activeTmuxSessions()
-			cmd, ok := active[sess.TmuxName]
-			if !ok {
-				sess.Status = "stopped"
-				m.store.UpdateSessionStatus(ctx, sess.ID, "stopped")
-			} else {
-				sess.CurrentCommand = cmd
-			}
+			sess.CurrentCommand = "claude"
 		}
 	}
 	return sess, nil
@@ -405,36 +327,14 @@ func (m *Manager) Get(ctx context.Context, id string) (*store.Session, error) {
 
 // Kill terminates a session and removes it from DB.
 func (m *Manager) Kill(ctx context.Context, id string) error {
-	sess, err := m.store.GetSession(ctx, id)
-	if err != nil {
-		return err
-	}
-
-	if sess.TeammateMode == "in-process" {
-		m.cleanupInProc(id)
-	} else {
-		if err := exec.Command("tmux", "kill-session", "-t", sess.TmuxName).Run(); err != nil {
-			m.logger.Warn("tmux kill-session failed", "tmux", sess.TmuxName, "err", err)
-		}
-	}
+	m.cleanupInProc(id)
 
 	if err := m.store.DeleteSession(ctx, id); err != nil {
 		return fmt.Errorf("delete session: %w", err)
 	}
 
-	m.logger.Info("session killed", "id", id, "teammate_mode", sess.TeammateMode)
+	m.logger.Info("session killed", "id", id)
 	return nil
-}
-
-// Attach connects to a tmux session via PTY.
-func (m *Manager) Attach(sess *store.Session) (*os.File, *exec.Cmd, error) {
-	cmd := exec.Command("tmux", "attach-session", "-t", sess.TmuxName)
-	cmd.Env = append(os.Environ(), "TERM=xterm-256color", "SHELL=/bin/bash")
-	ptmx, err := pty.Start(cmd)
-	if err != nil {
-		return nil, nil, fmt.Errorf("pty start: %w", err)
-	}
-	return ptmx, cmd, nil
 }
 
 // RepoDir returns the configured repo directory.
@@ -475,56 +375,8 @@ func (m *Manager) cleanupInProc(id string) {
 	p.ptmx.Close()
 }
 
-// isTmuxAlive checks if a specific tmux session is still running.
-func (m *Manager) isTmuxAlive(tmuxName string) bool {
-	return exec.Command("tmux", "has-session", "-t", tmuxName).Run() == nil
-}
-
-// activeTmuxSessions returns a map of active tmux session names to a display label.
-func (m *Manager) activeTmuxSessions() map[string]string {
-	result := make(map[string]string)
-	out, err := exec.Command("tmux", "list-sessions", "-F", "#{session_name}\t#{pane_current_command}\t#{pane_title}").Output()
-	if err != nil {
-		return result
-	}
-	for _, line := range strings.Split(strings.TrimSpace(string(out)), "\n") {
-		line = strings.TrimSpace(line)
-		if line == "" {
-			continue
-		}
-		parts := strings.SplitN(line, "\t", 3)
-		name := parts[0]
-		cmd := ""
-		if len(parts) >= 2 {
-			cmd = parts[1]
-		}
-		title := ""
-		if len(parts) >= 3 {
-			title = cleanPaneTitle(parts[2])
-		}
-		if title != "" {
-			result[name] = title
-		} else {
-			result[name] = cmd
-		}
-	}
-	return result
-}
-
 // extractOAuthToken reads the Claude OAuth token from DB settings.
 func (m *Manager) extractOAuthToken(ctx context.Context) string {
 	token, _ := m.store.GetSetting(ctx, "claude_code_oauth_token")
 	return token
-}
-
-// cleanPaneTitle extracts a display label from the tmux pane title.
-func cleanPaneTitle(title string) string {
-	title = strings.TrimLeftFunc(title, func(r rune) bool {
-		return (r >= 0x2800 && r <= 0x28FF) || r == ' '
-	})
-	title = strings.TrimPrefix(title, "Claude ")
-	if title == "" || title == "Claude" || title == "claude" {
-		return ""
-	}
-	return title
 }
