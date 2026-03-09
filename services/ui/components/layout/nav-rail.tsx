@@ -10,6 +10,8 @@ import {
   PanelLeft,
   Code2,
   LogOut,
+  BookOpen,
+  Sparkles,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useUIStore } from "@/lib/stores/ui";
@@ -23,6 +25,8 @@ export interface NavItem {
 
 export const navItems: NavItem[] = [
   { href: "/", icon: Home, label: "홈" },
+  { href: "/guide", icon: BookOpen, label: "사용법" },
+  { href: "/examples", icon: Sparkles, label: "활용 방법" },
 ];
 
 export function NavRail({ className }: { className?: string }) {

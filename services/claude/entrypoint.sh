@@ -47,11 +47,10 @@ git config --global user.name "Claude Code"
 # Register OAuth token with Claude CLI if provided
 if [ -n "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
   echo "Registering Claude OAuth token via setup-token..."
-  echo "$CLAUDE_CODE_OAUTH_TOKEN" | claude setup-token 2>/dev/null || true
+  timeout 10 bash -c 'echo "$CLAUDE_CODE_OAUTH_TOKEN" | claude setup-token' 2>&1 || true
 fi
 
-# Ensure workspace directory exists and is writable by coder
+# Ensure workspace directory exists
 mkdir -p /workspace
-sudo chown -R "$(id -u):$(id -g)" /workspace
 
 exec tini -- /app/claude-server "$@"

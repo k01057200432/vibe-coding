@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates tzdata git curl bash sudo \
     tini nodejs npm \
     build-essential python3-dev \
+    docker.io \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/claude-server /app/claude-server

@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Terminal } from "lucide-react";
+import { useUIStore } from "@/lib/stores/ui";
 
 export default function HomePage() {
   const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
+  const router = useRouter();
+  const { toggleTerminal } = useUIStore();
 
   useEffect(() => {
     setLoggedIn(document.cookie.includes("session="));
@@ -35,11 +39,24 @@ export default function HomePage() {
     );
   }
 
+  const handleStart = () => {
+    toggleTerminal();
+    router.push("/guide");
+  };
+
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4">
-      <p className="text-[var(--text-secondary)]">
-        터미널을 열어 Claude와 대화를 시작하세요.
-      </p>
+    <div className="flex flex-1 flex-col items-center justify-center gap-6">
+      <div className="flex flex-col items-center gap-3 text-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--accent-glow)] text-[var(--accent)]">
+          <Terminal className="h-6 w-6" />
+        </div>
+        <p className="text-[var(--text-secondary)]">
+          터미널을 열어 Claude와 대화를 시작하세요.
+        </p>
+      </div>
+      <Button size="lg" className="px-8" onClick={handleStart}>
+        시작하기
+      </Button>
       <p className="text-xs text-[var(--text-muted)]">
         사이드바 하단 &quot;터미널&quot; 버튼 또는 Ctrl+` 단축키
       </p>
