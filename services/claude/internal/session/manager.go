@@ -121,11 +121,8 @@ func NewManager(repo store.Repository, logger *slog.Logger) *Manager {
 
 // Create starts a new session running Claude CLI via in-process PTY.
 func (m *Manager) Create(ctx context.Context, name, mode, resumeMode string) (*store.Session, error) {
-	// Verify auth is configured before starting a session.
+	// OAuth token is optional — Pro users can authenticate via `claude login` in the terminal.
 	oauthToken := m.extractOAuthToken(ctx)
-	if oauthToken == "" {
-		return nil, fmt.Errorf("no authentication configured: set CLAUDE_CODE_OAUTH_TOKEN in .env (see Pro Guide for Claude Pro users)")
-	}
 
 	id := uuid.New().String()
 

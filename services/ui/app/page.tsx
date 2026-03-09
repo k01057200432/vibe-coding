@@ -67,11 +67,11 @@ export default function HomePage() {
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" style={{ color: "var(--accent-amber)" }} />
           <div className="space-y-1.5">
             <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-              Claude 토큰이 설정되지 않았습니다
+              Claude 인증이 필요합니다
             </p>
             <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
-              .env 파일에 <code className="font-mono" style={{ color: "var(--accent-bright)" }}>CLAUDE_CODE_OAUTH_TOKEN</code>을 설정해야 합니다.
-              Claude Pro 사용자는 아래 가이드를 참고하세요.
+              터미널을 열고 <code className="font-mono" style={{ color: "var(--accent-bright)" }}>claude login</code>으로 로그인하거나,
+              .env 파일에 <code className="font-mono" style={{ color: "var(--accent-bright)" }}>CLAUDE_CODE_OAUTH_TOKEN</code>을 설정하세요.
             </p>
             <Link href="/pro">
               <button
