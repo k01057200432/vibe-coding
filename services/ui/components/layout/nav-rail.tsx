@@ -12,6 +12,8 @@ import {
   LogOut,
   BookOpen,
   Sparkles,
+  Cloud,
+  CreditCard,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useUIStore } from "@/lib/stores/ui";
@@ -27,6 +29,8 @@ export const navItems: NavItem[] = [
   { href: "/", icon: Home, label: "홈" },
   { href: "/guide", icon: BookOpen, label: "사용법" },
   { href: "/examples", icon: Sparkles, label: "활용 방법" },
+  { href: "/deploy", icon: Cloud, label: "배포 가이드" },
+  { href: "/pro", icon: CreditCard, label: "인증 가이드" },
 ];
 
 export function NavRail({ className }: { className?: string }) {

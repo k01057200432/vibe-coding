@@ -3,6 +3,7 @@ package server
 import (
 	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/k00432/vibe-coding/services/claude/internal/chat"
 	"github.com/k00432/vibe-coding/services/claude/internal/session"
@@ -22,6 +23,24 @@ func New(mgr *session.Manager, repo store.Repository, logger *slog.Logger) http.
 
 	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("ok"))
+	})
+
+	r.Get("/claude/api/auth-status", func(w http.ResponseWriter, r *http.Request) {
+		ok := os.Getenv("CLAUDE_CODE_OAUTH_TOKEN") != ""
+		if !ok {
+			// Also check credentials file written by `claude login`
+			home, err := os.UserHomeDir()
+			if err == nil {
+				_, err = os.Stat(home + "/.claude/.credentials.json")
+				ok = err == nil
+			}
+		}
+		w.Header().Set("Content-Type", "application/json")
+		if ok {
+			w.Write([]byte(`{"ok":true}`))
+		} else {
+			w.Write([]byte(`{"ok":false}`))
+		}
 	})
 
 	r.Route("/claude", func(r chi.Router) {

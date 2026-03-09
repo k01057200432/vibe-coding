@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { X, GripHorizontal } from "lucide-react";
+import { X, GripHorizontal, ExternalLink } from "lucide-react";
 import { useUIStore } from "@/lib/stores/ui";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -128,15 +128,26 @@ export function TerminalPanel() {
         <span className="font-mono text-xs text-[var(--text-muted)] uppercase tracking-wider">
           Claude Terminal
         </span>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-6 w-6 text-[var(--text-muted)]"
-          onClick={() => setTerminalOpen(false)}
-          title="닫기 (Ctrl+`)"
-        >
-          <X className="h-3.5 w-3.5" />
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-[var(--text-muted)]"
+            onClick={() => window.open(CLAUDE_URL, "_blank")}
+            title="새 탭으로 열기"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-[var(--text-muted)]"
+            onClick={() => setTerminalOpen(false)}
+            title="닫기 (Ctrl+`)"
+          >
+            <X className="h-3.5 w-3.5" />
+          </Button>
+        </div>
       </div>
 
       {/* Claude iframe */}
