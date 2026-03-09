@@ -16,8 +16,7 @@ export async function POST(req: NextRequest) {
   if (username === demoUsername && password === demoPassword) {
     const response = NextResponse.json({ ok: true });
     response.cookies.set("session", "authenticated", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      httpOnly: false,
       sameSite: "lax",
       maxAge: 60 * 60 * 24, // 24 hours
       path: "/",

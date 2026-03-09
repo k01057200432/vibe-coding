@@ -19,7 +19,12 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "Vibe Coding",
-  description: "AI-powered development environment",
+  description: "Claude Code 터미널 샌드박스 — 브라우저에서 바이브 코딩",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icons/icon.svg",
+    apple: "/icons/apple-touch-icon.png",
+  },
 };
 
 export const viewport: Viewport = {
