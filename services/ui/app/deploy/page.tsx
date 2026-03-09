@@ -223,7 +223,7 @@ export default function DeployPage() {
               필수 설정 항목:
             </p>
             <div
-              className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed"
+              className="rounded-lg px-4 py-3 font-mono text-xs leading-relaxed overflow-x-auto"
               style={{
                 background: "var(--bg-base)",
                 border: "1px solid var(--border-subtle)",
@@ -335,7 +335,7 @@ export default function DeployPage() {
                     루트 도메인 — <span className="font-mono font-normal" style={{ color: "var(--accent-bright)" }}>example.com</span>
                   </p>
                   <div
-                    className="rounded-lg px-4 py-2.5 font-mono text-xs leading-relaxed"
+                    className="rounded-lg px-4 py-2.5 font-mono text-xs leading-relaxed overflow-x-auto"
                     style={{ background: "var(--bg-base)", border: "1px solid var(--border-subtle)" }}
                   >
                     <div><span style={{ color: "var(--text-muted)" }}>Type: </span><span style={{ color: "var(--text-primary)" }}>A</span></div>
@@ -350,7 +350,7 @@ export default function DeployPage() {
                     서브도메인 — <span className="font-mono font-normal" style={{ color: "var(--accent-bright)" }}>vibe.example.com</span>
                   </p>
                   <div
-                    className="rounded-lg px-4 py-2.5 font-mono text-xs leading-relaxed"
+                    className="rounded-lg px-4 py-2.5 font-mono text-xs leading-relaxed overflow-x-auto"
                     style={{ background: "var(--bg-base)", border: "1px solid var(--border-subtle)" }}
                   >
                     <div><span style={{ color: "var(--text-muted)" }}>Type: </span><span style={{ color: "var(--text-primary)" }}>A</span></div>
@@ -603,7 +603,7 @@ export default function DeployPage() {
                 1. DNS — 와일드카드 A 레코드 등록
               </p>
               <div
-                className="rounded-lg px-4 py-2.5 font-mono text-xs leading-relaxed"
+                className="rounded-lg px-4 py-2.5 font-mono text-xs leading-relaxed overflow-x-auto"
                 style={{ background: "var(--bg-base)", border: "1px solid var(--border-subtle)" }}
               >
                 <div><span style={{ color: "var(--text-muted)" }}>Type: </span><span style={{ color: "var(--text-primary)" }}>A</span></div>

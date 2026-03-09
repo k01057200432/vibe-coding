@@ -14,6 +14,7 @@ import {
   MonitorSmartphone,
   Zap,
   CreditCard,
+  Github,
 } from "lucide-react";
 
 export default function GuidePage() {
@@ -398,6 +399,101 @@ export default function GuidePage() {
               </p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* GitHub PAT */}
+      <section className="space-y-3">
+        <h2 className="section-header" style={{ fontSize: "0.6875rem" }}>
+          Git Push 설정 (GitHub PAT)
+        </h2>
+        <div
+          className="obsidian-card space-y-3"
+          style={{ borderLeft: "2px solid var(--accent-amber)" }}
+        >
+          <div className="flex items-center gap-3">
+            <div
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
+              style={{ background: "var(--accent-amber-glow)", color: "var(--accent-amber)" }}
+            >
+              <Github className="h-[18px] w-[18px]" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                Claude가 git push까지 하게 하려면
+              </p>
+              <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                .env에 GitHub Personal Access Token을 설정합니다
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
+              1. GitHub에서 토큰 발급
+            </p>
+            <div className="space-y-1 pl-3">
+              {[
+                "GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)",
+                "Generate new token (classic) 클릭",
+                "repo 권한 체크 → Generate token",
+                "생성된 ghp_... 토큰을 복사",
+              ].map((step, i) => (
+                <div key={i} className="flex items-start gap-2">
+                  <span className="mt-0.5 shrink-0 font-mono text-xs font-bold" style={{ color: "var(--accent-amber)" }}>{i + 1}.</span>
+                  <span className="text-xs" style={{ color: "var(--text-secondary)" }}>{step}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
+              2. .env에 토큰 추가
+            </p>
+            <code
+              className="block overflow-x-auto rounded px-3 py-2 font-mono text-xs"
+              style={{
+                background: "var(--bg-base)",
+                border: "1px solid var(--border-subtle)",
+                color: "var(--accent-bright)",
+              }}
+            >
+              GITHUB_PAT=ghp_xxxxxxxxxxxxxxxxxxxx
+            </code>
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
+              3. 컨테이너 재시작
+            </p>
+            <code
+              className="block overflow-x-auto rounded px-3 py-2 font-mono text-xs"
+              style={{
+                background: "var(--bg-base)",
+                border: "1px solid var(--border-subtle)",
+                color: "var(--accent-bright)",
+              }}
+            >
+              docker compose up -d --build claude
+            </code>
+          </div>
+
+          <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
+            설정 후 Claude에게 &quot;커밋하고 푸시해줘&quot;라고 하면 알아서 처리합니다.
+            토큰은 컨테이너 내부에서만 사용되며 코드에 노출되지 않습니다.
+          </p>
+
+          <div
+            className="flex items-start gap-2 rounded px-2 py-1.5"
+            style={{ background: "var(--accent-amber-glow)", border: "1px solid var(--accent-amber)" }}
+          >
+            <span className="text-xs font-bold shrink-0" style={{ color: "var(--accent-amber)" }}>!</span>
+            <p className="text-xs" style={{ color: "var(--accent-amber)" }}>
+              토큰은 .env에만 보관하세요. .gitignore에 .env가 포함되어 있는지 확인하세요.
+              토큰이 유출되면 GitHub Settings에서 즉시 폐기(Revoke)하세요.
+            </p>
+          </div>
         </div>
       </section>
 

@@ -29,6 +29,7 @@ services:
     restart: unless-stopped
     environment:
       - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN}
+      - GITHUB_PAT=${GITHUB_PAT}
     volumes:
       - .:/workspace
       - claude-home:/home/coder

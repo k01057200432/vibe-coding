@@ -47,6 +47,13 @@ cp "$HOME/.profile" "$HOME/.bashrc"
 git config --global user.email "claude@vibe-coding.local"
 git config --global user.name "Claude Code"
 
+# GitHub PAT: configure git credential helper for push
+if [ -n "$GITHUB_PAT" ]; then
+  git config --global credential.helper store
+  echo "https://x-access-token:${GITHUB_PAT}@github.com" > "$HOME/.git-credentials"
+  chmod 600 "$HOME/.git-credentials"
+fi
+
 # Auth setup: OAuth token required (Max/Team/Enterprise or Pro via claude login)
 if [ -n "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
   echo "Registering Claude OAuth token via setup-token..."

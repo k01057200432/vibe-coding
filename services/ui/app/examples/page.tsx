@@ -409,7 +409,7 @@ export default function ExamplesPage() {
                     <CopyButton text={ex.prompt} accent={ex.accent} />
                   </div>
                   <div
-                    className="rounded-lg px-3 py-2.5 font-mono text-xs leading-relaxed"
+                    className="rounded-lg px-3 py-2.5 font-mono text-xs leading-relaxed break-words"
                     style={{
                       background: "var(--bg-base)",
                       border: "1px solid var(--border-subtle)",

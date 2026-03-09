@@ -7,7 +7,7 @@ import { BottomTabs } from "./bottom-tabs";
 import { TerminalPanel } from "./terminal-panel";
 import { CommandPalette } from "./command-palette";
 import { useUIStore } from "@/lib/stores/ui";
-import { AutoRefresh } from "./auto-refresh";
+import { RefreshButton } from "./auto-refresh";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -45,13 +45,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <NavRail className="hidden md:flex" />
       <div className="flex flex-1 flex-col min-w-0">
         {terminalOpen && <TerminalPanel />}
-        <main className="relative z-10 flex flex-1 flex-col overflow-y-auto p-4 md:p-6 animate-in">
+        <main className="relative z-10 flex flex-1 flex-col overflow-y-auto overflow-x-hidden p-4 md:p-6 animate-in">
           {children}
         </main>
         <BottomTabs className="md:hidden" />
       </div>
       <CommandPalette />
-      <AutoRefresh />
+      <RefreshButton />
     </div>
   );
 }

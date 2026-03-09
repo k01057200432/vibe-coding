@@ -244,10 +244,16 @@ html, body {
   border-radius: var(--card-radius);
   padding: var(--card-padding);
   box-shadow: var(--shadow-card);
-  overflow: hidden;
+  min-width: 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
   position: relative;
   transition: border-color 0.15s ease, transform 0.15s ease;
 }
+.obsidian-card > * {
+  min-width: 0;
+}
+
 .obsidian-card:hover {
   border-color: var(--border-default);
 }
