@@ -9,7 +9,9 @@ import {
   PanelLeftClose,
   PanelLeft,
   Code2,
+  LogOut,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useUIStore } from "@/lib/stores/ui";
 import { Button } from "@/components/ui/button";
 
@@ -25,7 +27,13 @@ export const navItems: NavItem[] = [
 
 export function NavRail({ className }: { className?: string }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { navCollapsed, toggleNavCollapsed, toggleTerminal } = useUIStore();
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
+  };
 
   const isActive = (href: string) =>
     pathname === href || (href !== "/" && pathname.startsWith(href));
@@ -115,6 +123,20 @@ export function NavRail({ className }: { className?: string }) {
               <span className="text-xs">축소</span>
             </>
           )}
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className={cn(
+            "w-full text-[var(--text-muted)] hover:text-red-400",
+            navCollapsed ? "justify-center px-2" : "justify-start gap-2"
+          )}
+          onClick={handleLogout}
+          title="로그아웃"
+        >
+          <LogOut className="h-4 w-4 shrink-0" />
+          {!navCollapsed && <span className="text-xs">로그아웃</span>}
         </Button>
       </div>
     </aside>

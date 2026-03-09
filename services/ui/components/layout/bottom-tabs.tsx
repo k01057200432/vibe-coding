@@ -3,18 +3,26 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Home, Terminal as TerminalIcon } from "lucide-react";
+import { Home, Terminal as TerminalIcon, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useUIStore } from "@/lib/stores/ui";
 
 const tabs = [
   { href: "/", icon: Home, label: "홈" },
   { href: "/__terminal__", icon: TerminalIcon, label: "터미널" },
+  { href: "/__logout__", icon: LogOut, label: "로그아웃" },
 ];
 
 export function BottomTabs({ className }: { className?: string }) {
   const pathname = usePathname();
+  const router = useRouter();
   const toggleTerminal = useUIStore((s) => s.toggleTerminal);
   const terminalOpen = useUIStore((s) => s.terminalOpen);
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
+  };
 
   const isActive = (href: string) =>
     href === "/__terminal__"
@@ -31,6 +39,19 @@ export function BottomTabs({ className }: { className?: string }) {
     >
       {tabs.map((tab) => {
         const active = isActive(tab.href);
+
+        if (tab.href === "/__logout__") {
+          return (
+            <button
+              key={tab.href}
+              onClick={handleLogout}
+              className="flex flex-1 flex-col items-center justify-center gap-0.5 py-2 min-h-[48px] transition-colors text-[var(--text-muted)]"
+            >
+              <tab.icon className="h-5 w-5" strokeWidth={1.75} />
+              <span className="text-[10px] font-medium">{tab.label}</span>
+            </button>
+          );
+        }
 
         if (tab.href === "/__terminal__") {
           return (

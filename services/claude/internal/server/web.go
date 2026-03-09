@@ -11,6 +11,17 @@ import (
 //go:embed static
 var staticFiles embed.FS
 
+func requireSession(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		cookie, err := r.Cookie("session")
+		if err != nil || cookie.Value != "authenticated" {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func handleChatPage(w http.ResponseWriter, r *http.Request) {
 	data, err := staticFiles.ReadFile("static/chat.html")
 	if err != nil {

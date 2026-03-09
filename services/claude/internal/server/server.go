@@ -25,6 +25,8 @@ func New(mgr *session.Manager, repo store.Repository, logger *slog.Logger) http.
 	})
 
 	r.Route("/claude", func(r chi.Router) {
+		r.Use(requireSession)
+
 		r.Get("/", handleChatPage)
 		r.Get("/chat", handleChatPage)
 

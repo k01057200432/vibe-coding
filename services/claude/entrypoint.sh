@@ -7,9 +7,20 @@ if [ -d "$HOME" ] && [ "$(stat -c %u "$HOME" 2>/dev/null)" != "$(id -u)" ]; then
   sudo chown -R "$(id -u):$(id -g)" "$HOME"
 fi
 
-# Initialize PVC home directory (first mount only)
+# Ensure onboarding is always completed (skip theme selection prompt)
 if [ ! -f "$HOME/.claude.json" ]; then
-  echo '{"hasCompletedOnboarding":true}' > "$HOME/.claude.json"
+  echo '{"hasCompletedOnboarding":true,"theme":"dark"}' > "$HOME/.claude.json"
+else
+  python3 -c "
+import json
+with open('$HOME/.claude.json') as f:
+    d = json.load(f)
+if not d.get('hasCompletedOnboarding'):
+    d['hasCompletedOnboarding'] = True
+    d.setdefault('theme', 'dark')
+    with open('$HOME/.claude.json', 'w') as f:
+        json.dump(d, f, indent=2)
+" 2>/dev/null || true
 fi
 
 # Install Claude CLI if missing or broken
@@ -33,7 +44,14 @@ cp "$HOME/.profile" "$HOME/.bashrc"
 git config --global user.email "claude@vibe-coding.local"
 git config --global user.name "Claude Code"
 
-# Ensure workspace directory exists
+# Register OAuth token with Claude CLI if provided
+if [ -n "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
+  echo "Registering Claude OAuth token via setup-token..."
+  echo "$CLAUDE_CODE_OAUTH_TOKEN" | claude setup-token 2>/dev/null || true
+fi
+
+# Ensure workspace directory exists and is writable by coder
 mkdir -p /workspace
+sudo chown -R "$(id -u):$(id -g)" /workspace
 
 exec tini -- /app/claude-server "$@"

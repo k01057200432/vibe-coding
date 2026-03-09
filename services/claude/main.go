@@ -31,6 +31,11 @@ func main() {
 	}
 	defer repo.Close()
 
+	// Seed Claude OAuth token from env var into SQLite settings
+	if token := os.Getenv("CLAUDE_CODE_OAUTH_TOKEN"); token != "" {
+		repo.SaveSetting(context.Background(), "claude_code_oauth_token", token)
+	}
+
 	mgr := session.NewManager(repo, logger)
 	router := server.New(mgr, repo, logger)
 
