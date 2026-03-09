@@ -8,10 +8,10 @@ import {
   Smartphone,
   LayoutGrid,
   BarChart3,
-  Webhook,
   Clock,
-  Mail,
-  Eye,
+  FileText,
+  Github,
+  Table2,
 } from "lucide-react";
 
 const examples = [
@@ -128,20 +128,6 @@ const examples = [
     ],
   },
   {
-    icon: Webhook,
-    title: "WebSocket 실시간 알림",
-    accent: "var(--accent-red)",
-    glow: "var(--accent-red-glow)",
-    prompt:
-      "실시간 알림 기능 만들어줘. services/notify/ 디렉토리에 Go 또는 Node.js WebSocket 서버 만들고, docker-compose.yml에 추가해줘. UI에서 알림 벨 아이콘 클릭하면 실시간 메시지 목록이 보이게. Caddy에서 /ws/* 로 프록시해줘.",
-    result: [
-      "services/notify/ WebSocket 서버 (Dockerfile 포함)",
-      "docker-compose.yml에 notify 서비스 추가",
-      "Caddyfile에 /ws/* WebSocket 프록시",
-      "UI에 알림 벨 + 드롭다운 컴포넌트",
-    ],
-  },
-  {
     icon: Clock,
     title: "크론잡 / 백그라운드 워커",
     accent: "var(--accent-amber)",
@@ -156,31 +142,47 @@ const examples = [
     ],
   },
   {
-    icon: Mail,
-    title: "이메일 발송 (SMTP)",
-    accent: "var(--accent-purple)",
-    glow: "rgba(167, 139, 250, 0.12)",
+    icon: FileText,
+    title: "서브 페이지 만들기",
+    accent: "var(--accent)",
+    glow: "var(--accent-glow)",
     prompt:
-      "이메일 발송 기능 추가해줘. .env에 SMTP 설정(호스트, 포트, 계정) 넣고, lib/mail.ts에 nodemailer로 발송 모듈 만들어줘. 비밀번호 재설정 이메일 API도 만들어줘.",
+      "공지사항 페이지 만들어줘. app/notice/page.tsx 생성하고, 상단에 제목/날짜/뱃지가 있는 카드 리스트 형태로 만들어줘. 더미 데이터 3~5개 넣고, 사이드바 메뉴에도 '공지사항' 추가해줘. 재빌드까지 해줘.",
     result: [
-      ".env에 SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS",
-      "lib/mail.ts nodemailer 발송 모듈",
-      "app/api/auth/reset-password/route.ts 비밀번호 재설정 API",
-      "이메일 HTML 템플릿",
+      "app/notice/page.tsx 공지사항 페이지 생성",
+      "카드 리스트 UI (제목, 날짜, 뱃지)",
+      "nav-rail.tsx에 공지사항 메뉴 추가",
+      "docker compose 재빌드 및 반영",
     ],
   },
   {
-    icon: Eye,
-    title: "모니터링 (Grafana + Prometheus)",
-    accent: "var(--profit)",
-    glow: "var(--profit-glow)",
+    icon: Table2,
+    title: "DB를 활용한 페이지 만들기",
+    accent: "var(--accent-blue)",
+    glow: "var(--accent-blue-glow)",
     prompt:
-      "docker-compose.yml에 Prometheus와 Grafana 추가해줘. Caddy에서 grafana.example.com 서브도메인으로 Grafana에 프록시하고, Node.js 앱의 메트릭을 수집할 수 있게 prom-client 패키지도 설치해줘.",
+      "SQLite로 할 일(Todo) 관리 페이지 만들어줘. better-sqlite3 설치하고, lib/db.ts에 todos 테이블 만들어줘. app/todos/page.tsx는 서버 컴포넌트로 DB에서 목록 읽어서 보여주고, 추가/삭제는 Server Actions로 처리해줘. docker volume에 DB 파일 영속화하고, 사이드바 메뉴에 추가하고 재빌드해줘.",
     result: [
-      "docker-compose.yml에 prometheus, grafana 서비스",
-      "services/prometheus/prometheus.yml 설정 파일",
-      "Caddyfile에 grafana 서브도메인 프록시",
-      "UI에 prom-client 메트릭 엔드포인트 (/metrics)",
+      "better-sqlite3 설치 + lib/db.ts todos 테이블",
+      "app/todos/page.tsx 서버 컴포넌트 (DB 조회)",
+      "app/todos/actions.ts Server Actions (추가/삭제)",
+      "docker-compose.yml data volume 영속화",
+      "nav-rail.tsx 메뉴 추가 + 재빌드",
+    ],
+  },
+  {
+    icon: Github,
+    title: "Private GitHub 레포를 서비스로 추가",
+    accent: "var(--accent-purple)",
+    glow: "rgba(167, 139, 250, 0.12)",
+    prompt:
+      "Private GitHub 레포(https://github.com/my-org/my-app)를 새 서비스로 추가해줘. GitHub Personal Access Token은 .env의 GITHUB_TOKEN에 있어. services/my-app/ 에 클론하고 Dockerfile 만들어줘. docker-compose.yml에 my-app 서비스 추가하고, Caddyfile에서 my-app.example.com 서브도메인으로 프록시 설정해줘. 코드 업데이트는 'git pull && docker compose build my-app && docker compose up -d my-app'으로 하면 되게 해줘.",
+    result: [
+      ".env에 GITHUB_TOKEN 항목 추가 (.env.example 반영)",
+      "services/my-app/ 에 레포 클론 + Dockerfile 생성",
+      "docker-compose.yml에 my-app 서비스 추가",
+      "Caddyfile에 my-app.example.com 서브도메인 프록시",
+      "업데이트 방법 주석 문서화",
     ],
   },
   {

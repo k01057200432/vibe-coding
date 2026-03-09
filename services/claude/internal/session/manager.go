@@ -121,9 +121,13 @@ func NewManager(repo store.Repository, logger *slog.Logger) *Manager {
 
 // Create starts a new session running Claude CLI via in-process PTY.
 func (m *Manager) Create(ctx context.Context, name, mode, resumeMode string) (*store.Session, error) {
-	id := uuid.New().String()
-
+	// Verify auth is configured before starting a session.
 	oauthToken := m.extractOAuthToken(ctx)
+	if oauthToken == "" {
+		return nil, fmt.Errorf("no authentication configured: set CLAUDE_CODE_OAUTH_TOKEN in .env (see Pro Guide for Claude Pro users)")
+	}
+
+	id := uuid.New().String()
 
 	script := claude.BuildClaudeCmd(mode, oauthToken, m.binary, resumeMode)
 
@@ -308,8 +312,10 @@ func (m *Manager) cleanupInProc(id string) {
 	p.ptmx.Close()
 }
 
-// extractOAuthToken reads the Claude OAuth token from DB settings.
+// extractOAuthToken reads the Claude OAuth token from DB settings or env.
 func (m *Manager) extractOAuthToken(ctx context.Context) string {
-	token, _ := m.store.GetSetting(ctx, "claude_code_oauth_token")
-	return token
+	if token, _ := m.store.GetSetting(ctx, "claude_code_oauth_token"); token != "" {
+		return token
+	}
+	return os.Getenv("CLAUDE_CODE_OAUTH_TOKEN")
 }

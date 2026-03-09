@@ -15,6 +15,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tini nodejs npm \
     build-essential python3-dev \
     docker.io \
+    && curl -fsSL "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$(uname -m)" \
+       -o /usr/local/bin/docker-compose \
+    && chmod +x /usr/local/bin/docker-compose \
+    && ln -s /usr/local/bin/docker-compose /usr/local/bin/docker-compose-v2 \
+    && mkdir -p /usr/local/lib/docker/cli-plugins \
+    && ln -s /usr/local/bin/docker-compose /usr/local/lib/docker/cli-plugins/docker-compose \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/claude-server /app/claude-server

@@ -44,7 +44,7 @@ cp "$HOME/.profile" "$HOME/.bashrc"
 git config --global user.email "claude@vibe-coding.local"
 git config --global user.name "Claude Code"
 
-# Register OAuth token with Claude CLI if provided
+# Auth setup: OAuth token required (Max/Team/Enterprise or Pro via claude login)
 if [ -n "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
   echo "Registering Claude OAuth token via setup-token..."
   timeout 10 bash -c 'echo "$CLAUDE_CODE_OAUTH_TOKEN" | claude setup-token' 2>&1 || true

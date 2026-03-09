@@ -6,3 +6,4 @@ dist/
 *.sqlite
 tmp/
 .DS_Store
+k8s/
