@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { Providers } from "@/lib/providers";
 import { AppShell } from "@/components/layout/app-shell";
-import { SwRegister } from "@/components/layout/sw-register";
 import "./globals.css";
 
 const inter = Inter({
@@ -19,17 +18,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Trading Terminal",
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "Trading",
-  },
-  icons: {
-    icon: "/icons/icon.svg",
-    apple: "/icons/apple-touch-icon.png",
-  },
+  title: "Vibe Coding",
+  description: "AI-powered development environment",
 };
 
 export const viewport: Viewport = {
@@ -54,7 +44,6 @@ export default function RootLayout({
       >
         <Providers>
           <AppShell>{children}</AppShell>
-          <SwRegister />
         </Providers>
       </body>
     </html>

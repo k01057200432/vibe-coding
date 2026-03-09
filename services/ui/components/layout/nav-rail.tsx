@@ -4,38 +4,23 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard,
-  Target,
-  ArrowLeftRight,
-  Lightbulb,
-  Bell,
-  CalendarDays,
-  Settings,
+  Home,
   Terminal,
-  BarChart3,
   PanelLeftClose,
   PanelLeft,
-  BookOpen,
+  Code2,
 } from "lucide-react";
 import { useUIStore } from "@/lib/stores/ui";
 import { Button } from "@/components/ui/button";
 
 export interface NavItem {
   href: string;
-  icon: typeof LayoutDashboard;
+  icon: typeof Home;
   label: string;
-  key: string;
 }
 
 export const navItems: NavItem[] = [
-  { href: "/", icon: LayoutDashboard, label: "대시보드", key: "1" },
-  { href: "/catalog", icon: BookOpen, label: "카탈로그", key: "2" },
-  { href: "/strategies", icon: Target, label: "전략", key: "3" },
-  { href: "/trading", icon: ArrowLeftRight, label: "거래", key: "4" },
-  { href: "/insights", icon: Lightbulb, label: "인사이트", key: "5" },
-  { href: "/notifications/unread", icon: Bell, label: "알림", key: "6" },
-  { href: "/calendar", icon: CalendarDays, label: "캘린더", key: "7" },
-  { href: "/settings", icon: Settings, label: "설정", key: "8" },
+  { href: "/", icon: Home, label: "홈" },
 ];
 
 export function NavRail({ className }: { className?: string }) {
@@ -58,15 +43,12 @@ export function NavRail({ className }: { className?: string }) {
       <div className="flex items-center gap-3 border-b border-subtle px-4 py-4">
         <Link href="/" className="flex items-center gap-3 min-w-0">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--accent-glow)] text-[var(--accent)]">
-            <BarChart3 className="h-[18px] w-[18px]" />
+            <Code2 className="h-[18px] w-[18px]" />
           </div>
           {!navCollapsed && (
             <div className="flex flex-col min-w-0">
               <span className="text-sm font-bold text-[var(--text-primary)] truncate">
-                Trading
-              </span>
-              <span className="font-mono text-[10px] uppercase tracking-wider text-dim">
-                v1.0
+                Vibe Coding
               </span>
             </div>
           )}
@@ -91,10 +73,7 @@ export function NavRail({ className }: { className?: string }) {
               >
                 <item.icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
                 {!navCollapsed && (
-                  <>
-                    <span className="flex-1 truncate">{item.label}</span>
-                    <span className="nav-shortcut hidden lg:flex">{item.key}</span>
-                  </>
+                  <span className="flex-1 truncate">{item.label}</span>
                 )}
               </Link>
             );

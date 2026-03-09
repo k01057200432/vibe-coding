@@ -12,7 +12,7 @@ FROM reg.int.gobau.dev/library/debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates tzdata git curl bash sudo \
-    tmux tini nodejs npm \
+    tini nodejs npm \
     build-essential python3-dev \
     && rm -rf /var/lib/apt/lists/*
 

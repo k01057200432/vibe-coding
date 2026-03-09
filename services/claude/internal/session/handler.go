@@ -3,11 +3,8 @@ package session
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log/slog"
 	"net/http"
-	"os"
-	"os/exec"
 	"sync"
 	"time"
 
@@ -116,11 +113,7 @@ func (h *Handler) HandleSession(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	if sess.TeammateMode == "in-process" {
-		h.handleInProcess(ctx, cancel, id, cw, conn)
-	} else {
-		h.handleTmux(ctx, cancel, id, sess, cw, conn)
-	}
+	h.handleInProcess(ctx, cancel, id, cw, conn)
 }
 
 // handleInProcess handles WebSocket relay for in-process sessions using the broadcaster pattern.
@@ -185,107 +178,7 @@ func (h *Handler) handleInProcess(ctx context.Context, cancel context.CancelFunc
 	}()
 
 	<-ctx.Done()
-	h.logger.Info("websocket session ended (in-process)", "id", id)
-}
-
-// handleTmux handles WebSocket relay for tmux sessions with reattach support.
-func (h *Handler) handleTmux(ctx context.Context, cancel context.CancelFunc, id string, sess *Session, cw *connWriter, conn *websocket.Conn) {
-	ptmx, cmd, err := h.manager.Attach(sess)
-	if err != nil {
-		h.logger.Error("attach failed", "id", id, "err", err)
-		conn.WriteMessage(websocket.TextMessage, []byte("Failed to attach: "+err.Error()))
-		return
-	}
-
-	var ptyMu sync.Mutex
-	var closeReason string
-
-	// PTY → WebSocket (with reattach on transient error)
-	go func() {
-		buf := make([]byte, 32768)
-		for {
-			ptyMu.Lock()
-			currentPtmx := ptmx
-			currentCmd := cmd
-			ptyMu.Unlock()
-
-			n, readErr := currentPtmx.Read(buf)
-			if n > 0 {
-				if werr := cw.write(websocket.BinaryMessage, buf[:n]); werr != nil {
-					closeReason = fmt.Sprintf("pty→ws write: %v", werr)
-					cancel()
-					return
-				}
-			}
-			if readErr != nil {
-				if h.manager.isTmuxAlive(sess.TmuxName) {
-					h.logger.Info("pty read error but tmux alive, reattaching",
-						"id", id, "err", readErr)
-					currentPtmx.Close()
-					detachCmd(currentCmd)
-					time.Sleep(500 * time.Millisecond)
-
-					newPtmx, newCmd, attachErr := h.manager.Attach(sess)
-					if attachErr == nil {
-						ptyMu.Lock()
-						ptmx = newPtmx
-						cmd = newCmd
-						ptyMu.Unlock()
-						continue
-					}
-					h.logger.Warn("reattach failed", "id", id, "err", attachErr)
-				}
-				closeReason = fmt.Sprintf("pty read: %v", readErr)
-				cancel()
-				return
-			}
-		}
-	}()
-
-	// WebSocket → PTY
-	go func() {
-		for {
-			msgType, data, err := conn.ReadMessage()
-			if err != nil {
-				closeReason = fmt.Sprintf("ws read: %v", err)
-				cancel()
-				return
-			}
-
-			ptyMu.Lock()
-			currentPtmx := ptmx
-			ptyMu.Unlock()
-
-			if msgType == websocket.TextMessage {
-				var resize resizeMsg
-				if json.Unmarshal(data, &resize) == nil && resize.Type == "resize" {
-					pty.Setsize(currentPtmx, &pty.Winsize{
-						Cols: resize.Cols,
-						Rows: resize.Rows,
-					})
-					continue
-				}
-			}
-
-			if _, err := currentPtmx.Write(data); err != nil {
-				closeReason = fmt.Sprintf("pty write: %v", err)
-				cancel()
-				return
-			}
-		}
-	}()
-
-	<-ctx.Done()
-
-	ptyMu.Lock()
-	finalPtmx := ptmx
-	finalCmd := cmd
-	ptyMu.Unlock()
-
-	finalPtmx.Close()
-	detachCmd(finalCmd)
-
-	h.logger.Info("websocket session ended (tmux)", "id", id, "reason", closeReason)
+	h.logger.Info("websocket session ended", "id", id)
 }
 
 // HandleSessionList handles GET /api/sessions.
@@ -305,10 +198,9 @@ func (h *Handler) HandleSessionList(w http.ResponseWriter, r *http.Request) {
 // HandleSessionCreate handles POST /api/sessions.
 func (h *Handler) HandleSessionCreate(w http.ResponseWriter, r *http.Request) {
 	var req struct {
-		Name         string `json:"name"`
-		Mode         string `json:"mode"`
-		TeammateMode string `json:"teammate_mode"`
-		Resume       string `json:"resume"` // "" | "continue" | "resume"
+		Name   string `json:"name"`
+		Mode   string `json:"mode"`
+		Resume string `json:"resume"` // "" | "continue" | "resume"
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "invalid request body", http.StatusBadRequest)
@@ -324,19 +216,12 @@ func (h *Handler) HandleSessionCreate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "mode must be admin, advisory, or shell", http.StatusBadRequest)
 		return
 	}
-	if req.TeammateMode == "" {
-		req.TeammateMode = "in-process"
-	}
-	if req.TeammateMode != "tmux" && req.TeammateMode != "in-process" {
-		http.Error(w, "teammate_mode must be tmux or in-process", http.StatusBadRequest)
-		return
-	}
 	if req.Resume != "" && req.Resume != "continue" && req.Resume != "resume" {
 		http.Error(w, "resume must be empty, continue, or resume", http.StatusBadRequest)
 		return
 	}
 
-	sess, err := h.manager.Create(r.Context(), req.Name, req.Mode, req.TeammateMode, req.Resume)
+	sess, err := h.manager.Create(r.Context(), req.Name, req.Mode, req.Resume)
 	if err != nil {
 		h.logger.Error("create session failed", "err", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -366,21 +251,6 @@ func (h *Handler) HandleSessionDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
-}
-
-// detachCmd gracefully detaches a tmux attach process.
-func detachCmd(cmd *exec.Cmd) {
-	if cmd == nil || cmd.Process == nil {
-		return
-	}
-	cmd.Process.Signal(os.Interrupt)
-	waitDone := make(chan struct{})
-	go func() { cmd.Wait(); close(waitDone) }()
-	select {
-	case <-waitDone:
-	case <-time.After(3 * time.Second):
-		cmd.Process.Kill()
-	}
 }
 
 func writeJSON(w http.ResponseWriter, v any) {

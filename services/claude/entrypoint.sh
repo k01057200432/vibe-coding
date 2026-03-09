@@ -12,15 +12,6 @@ if [ ! -f "$HOME/.claude.json" ]; then
   echo '{"hasCompletedOnboarding":true}' > "$HOME/.claude.json"
 fi
 
-if [ ! -f "$HOME/.tmux.conf" ]; then
-  cat > "$HOME/.tmux.conf" <<'TMUX'
-set -g history-limit 50000
-set -g mouse on
-set -g default-terminal "tmux-256color"
-set -gq allow-passthrough on
-TMUX
-fi
-
 # Install Claude CLI if missing or broken (PVC may have stale Alpine/musl binary)
 if ! claude --version &>/dev/null; then
   echo "Installing Claude CLI (missing or broken binary)..."
