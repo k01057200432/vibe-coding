@@ -17,7 +17,7 @@ import (
 
 func main() {
 	var (
-		dbPath = flag.String("db", "/data/sessions.db", "SQLite database file path")
+		dbPath = flag.String("db", "/home/coder/sessions.db", "SQLite database file path")
 		addr   = flag.String("addr", ":8081", "listen address")
 	)
 	flag.Parse()
