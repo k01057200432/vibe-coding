@@ -188,7 +188,7 @@ export default function DeployPage() {
           >
             <Rocket className="h-[18px] w-[18px]" />
           </div>
-          <div className="space-y-2 w-full">
+          <div className="space-y-2 min-w-0">
             <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
               4. 저장소 클론
             </p>
@@ -212,7 +212,7 @@ export default function DeployPage() {
           >
             <Terminal className="h-[18px] w-[18px]" />
           </div>
-          <div className="space-y-2 w-full">
+          <div className="space-y-2 min-w-0">
             <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
               5. 환경변수 설정
             </p>
@@ -264,7 +264,7 @@ export default function DeployPage() {
           >
             <Rocket className="h-[18px] w-[18px]" />
           </div>
-          <div className="space-y-2 w-full">
+          <div className="space-y-2 min-w-0">
             <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
               6. 구동
             </p>
@@ -312,7 +312,7 @@ export default function DeployPage() {
             >
               <Globe className="h-[18px] w-[18px]" />
             </div>
-            <div className="space-y-3 w-full">
+            <div className="space-y-3 min-w-0">
               <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                 1. DNS 설정
               </p>
@@ -415,7 +415,7 @@ export default function DeployPage() {
             >
               <Shield className="h-[18px] w-[18px]" />
             </div>
-            <div className="space-y-2 w-full">
+            <div className="space-y-2 min-w-0">
               <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                 2. 80 / 443 포트 추가 개방
               </p>
@@ -445,7 +445,7 @@ export default function DeployPage() {
             >
               <Zap className="h-[18px] w-[18px]" />
             </div>
-            <div className="space-y-2 w-full">
+            <div className="space-y-2 min-w-0">
               <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                 3. Caddyfile + docker-compose.yml 수정
               </p>
@@ -518,7 +518,7 @@ export default function DeployPage() {
             >
               <Smartphone className="h-[18px] w-[18px]" />
             </div>
-            <div className="space-y-2 w-full">
+            <div className="space-y-2 min-w-0">
               <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                 PWA 사용 가능
               </p>
@@ -562,7 +562,7 @@ export default function DeployPage() {
             >
               <Globe className="h-[18px] w-[18px]" />
             </div>
-            <div className="space-y-2 w-full">
+            <div className="space-y-2 min-w-0">
               <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                 와일드카드란?
               </p>
@@ -598,7 +598,7 @@ export default function DeployPage() {
             >
               <Shield className="h-[18px] w-[18px]" />
             </div>
-            <div className="space-y-2 w-full">
+            <div className="space-y-2 min-w-0">
               <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                 1. DNS — 와일드카드 A 레코드 등록
               </p>
@@ -629,7 +629,7 @@ export default function DeployPage() {
             >
               <Zap className="h-[18px] w-[18px]" />
             </div>
-            <div className="space-y-2 w-full">
+            <div className="space-y-2 min-w-0">
               <div className="flex items-center gap-2">
                 <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                   2-A. Caddyfile — 서브도메인별 사이트 블록 (권장)
@@ -686,7 +686,7 @@ api.example.com {
             >
               <Zap className="h-[18px] w-[18px]" />
             </div>
-            <div className="space-y-2 w-full">
+            <div className="space-y-2 min-w-0">
               <div className="flex items-center gap-2">
                 <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                   2-B. Caddyfile — 와일드카드 인증서 + SNI 라우팅 (고급)
@@ -780,7 +780,7 @@ api.example.com {
           >
             <MessageSquare className="h-[18px] w-[18px]" />
           </div>
-          <div className="space-y-3 w-full">
+          <div className="space-y-3 min-w-0">
             <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
               배포 관련 설정을 터미널에서 Claude에게 직접 요청할 수 있습니다.
               파일 수정, 재빌드, 재시작까지 알아서 처리합니다.
@@ -845,7 +845,7 @@ api.example.com {
             >
               <Globe className="h-[18px] w-[18px]" />
             </div>
-            <div className="space-y-2 w-full">
+            <div className="space-y-2 min-w-0">
               <div className="flex items-center gap-2">
                 <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>무료 — DuckDNS</p>
                 <span
@@ -886,7 +886,7 @@ api.example.com {
             >
               <Globe className="h-[18px] w-[18px]" />
             </div>
-            <div className="space-y-2 w-full">
+            <div className="space-y-2 min-w-0">
               <div className="flex items-center gap-2">
                 <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>유료 도메인 구매 후 서브도메인 분리</p>
                 <span
@@ -930,7 +930,7 @@ api.example.com {
             >
               <Zap className="h-[18px] w-[18px]" />
             </div>
-            <div className="space-y-2 w-full">
+            <div className="space-y-2 min-w-0">
               <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                 Caddyfile에 서브도메인 반영
               </p>

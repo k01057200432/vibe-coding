@@ -247,6 +247,7 @@ html, body {
   min-width: 0;
   word-break: break-word;
   overflow-wrap: break-word;
+  overflow: hidden;
   position: relative;
   transition: border-color 0.15s ease, transform 0.15s ease;
 }
