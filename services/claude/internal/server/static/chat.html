@@ -136,10 +136,13 @@ body {
   flex: 1; min-height: 0;
   background: var(--bg-base);
   padding-bottom: 4rem;
-  overscroll-behavior-y: contain;
 }
 .terminal-wrap .xterm { padding: 4px; }
-.terminal-wrap .xterm-viewport { overflow-y: auto !important; scrollbar-width: none; }
+.terminal-wrap .xterm-viewport {
+  overflow-y: auto !important;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none;
+}
 .terminal-wrap .xterm-viewport::-webkit-scrollbar { display: none; }
 
 /* Empty state — mode selection */
