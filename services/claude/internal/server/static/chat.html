@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Claude Terminal</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/css/xterm.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@6.0.0/css/xterm.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols+2&display=swap">
 <style>
 @font-face {
@@ -44,12 +44,12 @@ html { touch-action: manipulation; }
 /* Dark theme scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.2) transparent;
+  scrollbar-color: rgba(255,255,255,0.45) transparent;
 }
-*::-webkit-scrollbar { width: 6px; height: 6px; }
+*::-webkit-scrollbar { width: 2px; height: 2px; }
 *::-webkit-scrollbar-track { background: transparent; }
-*::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
-*::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.35); }
+*::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.45); border-radius: 1px; }
+*::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.7); }
 
 body {
   background: var(--bg-base);
@@ -136,9 +136,11 @@ body {
   flex: 1; min-height: 0;
   background: var(--bg-base);
   padding-bottom: 4rem;
+  overscroll-behavior-y: contain;
 }
 .terminal-wrap .xterm { padding: 4px; }
-.terminal-wrap .xterm-viewport { overflow-y: auto !important; }
+.terminal-wrap .xterm-viewport { overflow-y: auto !important; scrollbar-width: none; }
+.terminal-wrap .xterm-viewport::-webkit-scrollbar { display: none; }
 
 /* Empty state — mode selection */
 .empty-state {
@@ -289,7 +291,7 @@ body {
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/lib/xterm.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@6.0.0/lib/xterm.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.10.0/lib/addon-fit.min.js"></script>
 <script>
 (function() {
@@ -410,6 +412,17 @@ body {
         term.loadAddon(fit);
         term.open(el);
         fit.fit();
+
+        // Mobile touch scroll
+        var touchY = 0;
+        el.addEventListener('touchstart', function(e) {
+            touchY = e.touches[0].clientY;
+        }, { passive: true });
+        el.addEventListener('touchmove', function(e) {
+            var dy = touchY - e.touches[0].clientY;
+            touchY = e.touches[0].clientY;
+            term.scrollLines(Math.round(dy / 15));
+        }, { passive: true });
 
         term.attachCustomKeyEventHandler(function(e) {
             if (e.ctrlKey && !e.altKey && !e.metaKey) {
