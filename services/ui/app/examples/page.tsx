@@ -39,6 +39,27 @@ interface Category {
 
 const categories: Category[] = [
   {
+    label: "Claude API 활용",
+    description: "내장된 Claude API로 AI 기능을 만듭니다.",
+    examples: [
+      {
+        icon: Sparkles,
+        title: "리포트 생성 페이지 만들기",
+        accent: "var(--accent)",
+        glow: "var(--accent-glow)",
+        prompt:
+          "Claude Chat API를 활용한 리포트 생성 페이지를 만들어줘. 이 앱에는 POST /claude/api/chat 엔드포인트가 이미 있어. { prompt: string, mode: string }을 보내면 { content: string }으로 Claude 응답이 돌아와. app/report/page.tsx를 만들고, 주제 입력 필드와 '리포트 생성' 버튼을 넣어줘. 버튼 클릭 시 fetch('/claude/api/chat', { method: 'POST', body: JSON.stringify({ prompt: `${주제}에 대한 상세 리포트를 작성해줘. 마크다운 형식으로 제목, 개요, 본문, 결론을 포함해줘.`, mode: 'admin' }) })로 요청하고, 응답을 마크다운으로 렌더링해줘. react-markdown 설치하고, 로딩 상태와 에러 처리도 넣어줘. 사이드바 메뉴에 '리포트' 추가하고 재빌드까지 해줘.",
+        result: [
+          "app/report/page.tsx 리포트 생성 페이지 (주제 입력 + 생성 버튼)",
+          "POST /claude/api/chat 호출 → Claude 응답을 마크다운으로 렌더링",
+          "react-markdown 패키지 설치 + 로딩/에러 상태 처리",
+          "nav-rail.tsx에 리포트 메뉴 추가 + 재빌드",
+        ],
+        note: "이 앱의 Go 백엔드에 POST /claude/api/chat API가 내장되어 있습니다. { prompt, mode } 형식으로 요청하면 Claude CLI가 실행되어 응답을 반환합니다. 별도 API 키 없이 앱 내에서 바로 AI 기능을 만들 수 있습니다. 리포트 외에도 요약, 번역, 코드 리뷰 등 다양한 기능에 활용할 수 있습니다.",
+      },
+    ],
+  },
+  {
     label: "UI / 페이지",
     description: "새 페이지, 컴포넌트, 대시보드를 만듭니다.",
     examples: [
